@@ -17,7 +17,7 @@ public class CommentService {
 	CommentDao comdao = new CommentDao();
 	
 	@GET
-	@Path("/{id}")
+	@Path("/beer/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Comment> getBeerComments(@PathParam("id") int id) {
 		List<Comment> comments = comdao.getBeerComments(id);

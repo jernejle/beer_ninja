@@ -79,6 +79,20 @@ public class EventDao {
 		return events;
 	}
 	
+	public List<Event> getGoingEvents(int userId) {
+		em = DB.getDBFactory().createEntityManager();
+		List<Event> events = null;
+		try {
+			Query q = em.createQuery("SELECT e FROM Event e INNER JOIN e.going i where i.id = " + userId);
+			events = (List<Event>) q.getResultList();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			em.close();
+		}
+		return events;
+	}
+	
 	@PreDestroy
 	public void destruct() {
 		em.close();

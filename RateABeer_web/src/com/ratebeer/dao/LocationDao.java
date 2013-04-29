@@ -52,6 +52,20 @@ public class LocationDao {
 		}
 		return locations;
 	}
+	
+	
+	public List<Location> getBeerLocations(int beerId) {
+		em = DB.getDBFactory().createEntityManager();
+		List<Location> locations = null;
+		try {
+			Query q = em.createQuery("SELECT l FROM Location l WHERE l.beer.id = " + beerId);
+			locations = (List<Location>) q.getResultList();
+		} catch (Exception e) {
+		} finally {
+			em.close();
+		}
+		return locations;
+	}
 
 	public void updateLocation(Location loc) {
 		em = DB.getDBFactory().createEntityManager();

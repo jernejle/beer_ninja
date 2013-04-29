@@ -1,7 +1,10 @@
 package com.ratebeer.dao;
 
+import java.util.List;
+
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import com.rateabeer.pojo.Comment;
 import com.rateabeer.pojo.Rate;
@@ -31,13 +34,40 @@ public class RateDao {
 		Rate rate = null;
 		try {
 			rate = em.find(Rate.class, id);
-			return rate;
 		} catch (Exception e) {
 		} finally {
 			em.close();
 		}
 		return rate;
 	}
+	
+	public List<Rate> getRatingsOfUser(int userId) {
+		em = DB.getDBFactory().createEntityManager();
+		List<Rate> rates = null;
+		try {
+			Query q = em.createQuery("SELECT r FROM Rate r WHERE r.user.id = " + userId);
+			rates = (List<Rate>) q.getResultList();
+		} catch (Exception e) {
+		} finally {
+			em.close();
+		}
+		return rates;
+	}
+	
+	
+	public List<Rate> getBeerRatings(int beerId) {
+		em = DB.getDBFactory().createEntityManager();
+		List<Rate> rates = null;
+		try {
+			Query q = em.createQuery("SELECT r FROM Rate r WHERE r.beer.id = " + beerId);
+			rates = (List<Rate>) q.getResultList();
+		} catch (Exception e) {
+		} finally {
+			em.close();
+		}
+		return rates;
+	}
+
 
 	public void updateRate(Rate rate) {
 		em = DB.getDBFactory().createEntityManager();

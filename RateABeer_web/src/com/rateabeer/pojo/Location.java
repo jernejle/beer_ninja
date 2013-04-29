@@ -63,7 +63,6 @@ public class Location {
 		this.lon = lon;
 	}
 
-	@XmlTransient
 	public User getUser() {
 		return user;
 	}
@@ -72,7 +71,6 @@ public class Location {
 		this.user = user;
 	}
 
-	@XmlTransient
 	public Beer getBeer() {
 		return beer;
 	}

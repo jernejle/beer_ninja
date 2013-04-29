@@ -61,7 +61,6 @@ public class Rate {
 		this.user = user;
 	}
 
-	@XmlTransient
 	public Beer getBeer() {
 		return beer;
 	}

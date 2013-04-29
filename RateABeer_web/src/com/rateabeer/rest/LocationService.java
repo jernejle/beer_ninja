@@ -18,12 +18,21 @@ public class LocationService {
 	LocationDao locdao = new LocationDao();
 	
 	@GET
-	@Path("/{id}")
+	@Path("/user/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Location> getUserLocations(@PathParam("id") int id) {
 		List<Location> locations = locdao.getUserLocations(id);
 		if (locations == null) locations = new ArrayList<Location>();
-		return locdao.getUserLocations(id);
+		return locations;
+	}
+	
+	@GET
+	@Path("/beer/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Location> getBeerLocations(@PathParam("id") int id) {
+		List<Location> locations = locdao.getBeerLocations(id);
+		if (locations == null) locations = new ArrayList<Location>();
+		return locations;
 	}
 	
 }

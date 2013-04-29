@@ -28,8 +28,17 @@ public class EventService {
 	@GET
 	@Path("/invited/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public List<Event> getInvitedEvents(@PathParam("id") int id) {
-		List<Event> events = eventdao.getInvitedEvents(id);
+	public List<Event> getInvitedEvents(@PathParam("id") int userId) {
+		List<Event> events = eventdao.getInvitedEvents(userId);
+		if (events == null) events = new ArrayList<Event>();
+		return events;
+	}
+	
+	@GET
+	@Path("/going/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Event> getGoingEvents(@PathParam("id") int userId) {
+		List<Event> events = eventdao.getGoingEvents(userId);
 		if (events == null) events = new ArrayList<Event>();
 		return events;
 	}

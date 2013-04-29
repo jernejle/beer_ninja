@@ -30,6 +30,10 @@ public class Beer implements Serializable {
 	private Date added;
 	@NotNull
 	private String pic;
+	
+	private int rateAroma; // type1
+	private int rateAlcoholContent; // type2
+	private int rateFlavour; // type3
 
 	@OneToMany(mappedBy = "beer")
 	private Collection<Comment> comments;
@@ -93,6 +97,7 @@ public class Beer implements Serializable {
 		this.pic = pic;
 	}
 
+	@XmlTransient
 	public Collection<Rate> getRatings() {
 		return ratings;
 	}
@@ -101,6 +106,7 @@ public class Beer implements Serializable {
 		this.ratings = ratings;
 	}
 
+	@XmlTransient
 	public Collection<Location> getLocations() {
 		return locations;
 	}
@@ -117,4 +123,29 @@ public class Beer implements Serializable {
 	public void setUsers(Collection<User> users) {
 		this.users = users;
 	}
+
+	public int getRateAroma() {
+		return rateAroma;
+	}
+
+	public void setRateAroma(int rateAroma) {
+		this.rateAroma = rateAroma;
+	}
+
+	public int getRateAlcoholContent() {
+		return rateAlcoholContent;
+	}
+
+	public void setRateAlcoholContent(int rateAlcoholContent) {
+		this.rateAlcoholContent = rateAlcoholContent;
+	}
+
+	public int getRateFlavour() {
+		return rateFlavour;
+	}
+
+	public void setRateFlavour(int rateFlavour) {
+		this.rateFlavour = rateFlavour;
+	}
+
 }

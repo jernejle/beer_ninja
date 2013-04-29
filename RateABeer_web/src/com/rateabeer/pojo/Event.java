@@ -4,6 +4,7 @@ import java.sql.Date;
 import java.util.Collection;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,11 +38,11 @@ public class Event {
 	@NotNull
 	private User user;
 
-	@OneToMany
+	@OneToMany(fetch=FetchType.LAZY)
 	@JoinTable(name = "EVENT_GOING", joinColumns = { @JoinColumn(name = "EVENT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "id") })
 	private Collection<User> going;
 
-	@OneToMany
+	@OneToMany(fetch=FetchType.LAZY)
 	@JoinTable(name = "EVENT_INVITED", joinColumns = { @JoinColumn(name = "EVENT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "id") })
 	private Collection<User> invited;
 
@@ -85,7 +86,6 @@ public class Event {
 		this.lon = lon;
 	}
 
-	@XmlTransient
 	public User getUser() {
 		return user;
 	}
@@ -94,6 +94,7 @@ public class Event {
 		this.user = user;
 	}
 
+	@XmlTransient
 	public Collection<User> getGoing() {
 		return going;
 	}
@@ -102,6 +103,7 @@ public class Event {
 		this.going = going;
 	}
 
+	@XmlTransient
 	public Collection<User> getInvited() {
 		return invited;
 	}
