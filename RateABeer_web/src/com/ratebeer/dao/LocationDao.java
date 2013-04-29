@@ -1,7 +1,10 @@
 package com.ratebeer.dao;
 
+import java.util.List;
+
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import com.rateabeer.pojo.Location;
 import com.ratebeer.db.DB;
@@ -35,6 +38,19 @@ public class LocationDao {
 			em.close();
 		}
 		return loc;
+	}
+	
+	public List<Location> getUserLocations(int id) {
+		em = DB.getDBFactory().createEntityManager();
+		List<Location> locations = null;
+		try {
+			Query q = em.createQuery("SELECT l FROM Location l WHERE l.user.id = " + id);
+			locations = (List<Location>) q.getResultList();
+		} catch (Exception e) {
+		} finally {
+			em.close();
+		}
+		return locations;
 	}
 
 	public void updateLocation(Location loc) {
