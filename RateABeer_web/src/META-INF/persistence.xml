@@ -9,9 +9,8 @@
 		<class>com.rateabeer.pojo.Rate</class>
 		<class>com.rateabeer.pojo.User</class>
 		<properties>
-			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:C:\Users\Jernej\rabDB"/>
+			<property name="javax.persistence.jdbc.url" value="jdbc:sqlite:D:\rabDB"/>
 			<property name="javax.persistence.jdbc.user" value=""/>
-			<property name="javax.persistence.jdbc.password" value=""/>
 			<property name="javax.persistence.jdbc.driver" value="org.sqlite.JDBC"/>
 		</properties>
 	</persistence-unit>
