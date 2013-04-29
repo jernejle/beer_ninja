@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes" />
+	<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="viewport" content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+		
+	<link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" />
+	
+	<script src="js/jquery-1.9.1.min.js"></script>
+	<script src="js/jquery.mobile-1.3.1.min.js"></script>
+	<script type="text/javascript" src="cordova-2.6.0.js"></script>
+    
+    <link rel="stylesheet" href="css/style.css" /
+        
+    <title></title>
+</head>
+<body>
+	<!-- Home -->
+	<div data-role="page" id="page1">
+		<div data-theme="a" data-role="header">
+			<div style="text-align: center">
+				<img style="width: 320px; height: 38px" src="img/logo.png" />
+			</div>
+		</div>
+		<div data-role="content" class="content">
+			<h1>Popular beers</h1>
+			<div class="ui-grid-a my-breakpoint">
+				<div class="ui-block-a">Laško Zlatorog</div>
+				<div class="ui-block-b">
+					<div class="stars">
+						<a href="#pop1" data-rel="popup" data-inline="true"
+							data-transition="pop"> <img alt=""
+							src="img/web/star_blank.png"> <img alt=""
+							src="img/web/star_blank.png"> <img alt=""
+							src="img/web/star_blank.png"> <img alt=""
+							src="img/web/star_blank.png"> <img alt=""
+							src="img/web/star_blank.png">
+						</a>
+					</div>
+					<div class="votescount" data-role="popup" id="pop1">356558
+						votes</div>
+				</div>
+				<div class="ui-block-a">Heineken</div>
+				<div class="ui-block-b">
+					<div class="stars">
+						<a href="#pop2" data-rel="popup" data-inline="true"
+							data-transition="pop"><img alt=""
+							src="img/web/star_blank.png"> <img alt=""
+							src="img/web/star_blank.png"> <img alt=""
+							src="img/web/star_blank.png"> <img alt=""
+							src="img/web/star.png"> <img alt="" src="img/web/star.png"></a>
+					</div>
+					<div class="votescount" data-role="popup" id="pop2">758 votes</div>
+				</div>
+				<div class="ui-block-a">Guiness</div>
+				<div class="ui-block-b">
+					<div class="stars">
+						<img alt="" src="img/web/star_blank.png"> <img alt=""
+							src="img/web/star_blank.png"> <img alt=""
+							src="img/web/star_blank.png"> <img alt=""
+							src="img/web/star.png"> <img alt="" src="img/web/star.png">
+					</div>
+				</div>
+				<div class="ui-block-a">Union</div>
+				<div class="ui-block-b">
+					<div class="stars">
+						<img alt="" src="img/web/star_blank.png"> <img alt=""
+							src="img/web/star.png"> <img alt="" src="img/web/star.png">
+						<img alt="" src="img/web/star.png"> <img alt=""
+							src="img/web/star.png">
+					</div>
+				</div>
+			</div>
+
+
+			<div class="ui-grid-b my-breakpoint buttons">
+				<div class="ui-block-a">
+					<a data-role="button" href="#page1"> Rating </a>
+				</div>
+				<div class="ui-block-b">
+					<a data-role="button" href="#page1"> Votes </a>
+				</div>
+				<div class="ui-block-c">
+					<a data-role="button" href="#page1"> Popularity </a>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>

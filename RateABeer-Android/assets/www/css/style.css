@@ -1,0 +1,146 @@
+.ui-page {
+	background: url("../img/background.png");
+	color: white;
+	font-family: cursive;
+	font-weight: normal;
+	font-style: normal;
+	font-stretch: normal;
+	font-variant: normal;
+}
+
+.rateparam {
+	text-shadow: none;
+	font-size: 14px;
+}
+
+.title {
+	font-size: 17px;
+}
+
+h1 {
+	margin: 0 0 10px 0;
+	font-family: cursive;
+	font-size: 16px;
+	font-weight: normal;
+	font-style: italic;
+	font-family: cursive;
+}
+
+.overallrating {
+	font-size: 16px;
+	margin-top: 12px;
+}
+
+.category_ratings {
+	margin-top: 20px;
+}
+
+.ui-btn-inner {
+	font-size: 14px;
+	padding: 5px;
+	font-family: Helvetica, Arial, sans-serif;
+	font-style: italic;
+}
+
+.ui-body-c,.ui-overlay-c {
+	text-shadow: none;
+}
+
+.buttons {
+	margin-top: 20px;
+	font-weight: normal;
+}
+
+.ui-header {
+	background: transparent;
+	border: none;
+}
+
+.ui-header img {
+	margin-top: 15px;
+}
+
+.content {
+	margin-top: 10px;
+}
+
+.comment {
+	font-size: 13px;
+	margin: 10px 5px 5px 5px;
+	background-color: #444e5b;
+	padding: 5px;
+}
+
+.commentimg {
+	float: left;
+}
+
+.comment-datetime {
+	float: left;
+	margin: 3px 0 0 5px;
+	font-style: italic;
+	font-size: 14px;
+	font-family: Verdana;
+}
+
+.comment-datetime .date {
+	font-size: 11px;
+}
+
+.comment-content {
+	clear: both;
+	font-family: Verdana;
+	font-size: 13px;
+}
+
+.beer_logo img {
+	width: 100px;
+	height: 40px;
+}
+
+.beer_name {
+	padding-top: 5px;
+}
+
+#search {
+	margin: 0 0 20px 0;
+	height: 39px;
+}
+
+#search input {
+	border: 0px;
+	color: black;
+	font-size: 16px;
+}
+
+.people_name {
+	padding-top: 5px;
+}
+
+.link {
+	padding-top: 8px;
+	font-size: 13px;
+}
+
+.center_text_list {
+	text-align: center;
+}
+
+a {
+	text-decoration: none;	
+}
+
+.votescount {
+	padding: 5px;
+	background: black;
+	color: white;
+	font-weight: bold;
+}
+
+@media all and (max-width: 18.750em) {
+	.my-breakpoint .ui-block-a,.my-breakpoint .ui-block-b,.my-breakpoint .ui-block-c,.my-breakpoint .ui-block-d,.my-breakpoint .ui-block-e
+		{
+		width: 100%;
+		float: none;
+	}
+}
