@@ -53,7 +53,6 @@ public class Rate {
 		this.rate = ocena;
 	}
 
-	@XmlTransient
 	public User getUser() {
 		return user;
 	}

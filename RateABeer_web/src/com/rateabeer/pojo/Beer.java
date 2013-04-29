@@ -44,6 +44,7 @@ public class Beer implements Serializable {
 	@JoinTable(joinColumns = @JoinColumn(name = "BEER_ID", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "USER_ID", referencedColumnName = "id"))
 	private Collection<User> users;
 
+	@XmlTransient
 	public Collection<Comment> getComments() {
 		return comments;
 	}

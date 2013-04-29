@@ -55,7 +55,6 @@ public class Comment {
 		this.date = date;
 	}
 
-	@XmlTransient
 	public User getAuthor() {
 		return author;
 	}

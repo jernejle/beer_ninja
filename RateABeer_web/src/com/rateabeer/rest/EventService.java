@@ -17,6 +17,15 @@ public class EventService {
 	EventDao eventdao = new EventDao();
 	
 	@GET
+	@Path("/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Event getEvent(@PathParam("id") int id) {
+		Event e = eventdao.getEvent(id);
+		if (e == null) e = new Event();
+		return e;
+	}
+	
+	@GET
 	@Path("/invited/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<Event> getInvitedEvents(@PathParam("id") int id) {
@@ -24,4 +33,5 @@ public class EventService {
 		if (events == null) events = new ArrayList<Event>();
 		return events;
 	}
+	
 }
