@@ -2,6 +2,7 @@ package com.ratebeer.dao;
 
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 import com.rateabeer.pojo.User;
 import com.ratebeer.db.DB;
@@ -61,6 +62,26 @@ public class UserDao {
 		} finally {
 			em.close();
 		}
+	}
+	
+	public User loginUser(String userName, String password) {
+		User user = null;
+		
+		em = DB.getDBFactory().createEntityManager();
+		try {
+			Query q = em.createQuery("SELECT u FROM User u WHERE u.username=:userName AND u.password=:password");
+			q.setParameter("userName", userName);
+			q.setParameter("password", password);
+			em.getTransaction().begin();
+			user = (User) q.getSingleResult();
+			em.getTransaction().commit();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			em.close();
+		}
+		
+		return user;
 	}
 	
 	@PreDestroy

@@ -144,3 +144,7 @@ a {
 		float: none;
 	}
 }
+
+form {
+	width: 100% !important;
+}
