@@ -1,6 +1,5 @@
 package com.rateabeer.pojo;
 
-import java.io.Serializable;
 import java.sql.Date;
 import java.util.Collection;
 import javax.persistence.Entity;
@@ -14,10 +13,11 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @Entity
 @XmlRootElement
-public class Beer implements Serializable {
+public class Beer {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
@@ -81,6 +81,7 @@ public class Beer implements Serializable {
 		this.description = description;
 	}
 
+	@XmlJavaTypeAdapter(SqlDateAdapter.class)
 	public Date getAdded() {
 		return added;
 	}

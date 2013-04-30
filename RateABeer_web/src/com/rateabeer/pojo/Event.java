@@ -15,6 +15,7 @@ import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @Entity
 @XmlRootElement
@@ -54,6 +55,7 @@ public class Event {
 		this.id = id;
 	}
 
+	@XmlJavaTypeAdapter(SqlDateAdapter.class)
 	public Date getDate() {
 		return date;
 	}

@@ -10,6 +10,7 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @Entity
 @XmlRootElement
@@ -47,6 +48,7 @@ public class Comment {
 		this.comment = comment;
 	}
 
+	@XmlJavaTypeAdapter(SqlDateAdapter.class)
 	public Date getDate() {
 		return date;
 	}
