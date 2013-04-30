@@ -93,6 +93,17 @@ h1 {
 	font-size: 13px;
 }
 
+.description {
+	margin-top: 30px;
+}
+
+.descText {
+	font-family: serif;
+	font-size: 16px;
+	margin-top: 10px;
+	text-align: justify;
+}
+
 .beer_logo img {
 	width: 100px;
 	height: 40px;
