@@ -128,9 +128,18 @@ h1 {
 	padding-top: 5px;
 }
 
+.people_name a {
+	color: white;
+	text-decoration: none;
+}
+
 .link {
 	padding-top: 8px;
 	font-size: 13px;
+}
+
+.recent_beers {
+	margin-top: 20px;
 }
 
 .center_text_list {

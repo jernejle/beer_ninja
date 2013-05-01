@@ -1,7 +1,11 @@
 package com.ratebeer.dao;
 
+import java.util.List;
+
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
+
 import com.rateabeer.pojo.Beer;
 import com.ratebeer.db.DB;
 
@@ -60,6 +64,35 @@ public class BeerDao {
 		} finally {
 			em.close();
 		}
+	}
+	
+	public List<Beer> searchBeers(String param) {
+		em = DB.getDBFactory().createEntityManager();
+		List<Beer> beers = null;
+		try {
+			Query q = em.createQuery("SELECT b FROM Beer b WHERE UPPER(b.name) LIKE :param ORDER BY b.name");
+			q.setParameter("param", "%" + param.toUpperCase() + "%");
+			beers = (List<Beer>)q.getResultList();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			em.close();
+		}
+		return beers;
+	}
+	
+	public List<Beer> getLast(int num) {
+		em = DB.getDBFactory().createEntityManager();
+		List<Beer> beers = null;
+		try {
+			Query q = em.createQuery("SELECT b FROM Beer b ORDER BY b.id DESC").setMaxResults(num);
+			beers = (List<Beer>)q.getResultList();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			em.close();
+		}
+		return beers;
 	}
 
 	@PreDestroy

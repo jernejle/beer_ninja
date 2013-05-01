@@ -26,6 +26,7 @@
 	var commentsPage = 1;
 	var commentsData = null;
 	var dialogMessage = false;
+	var recentBeers = null;
 </script>
 
 </head>
@@ -39,43 +40,23 @@
 		</div>
 		<div data-role="content" class="content">
 			<div id="search">
-				<input type="search" name="search" id="search-basic" value="">
+				<input type="search" name="search" class="search-input" id="search-basic" value="">
 			</div>
 
 			<div class="ui-grid-b my-breakpoint buttons">
 				<div class="ui-block-a">
-					<a data-role="button" href=""> All </a>
+					<a data-role="button" id="recentBeersLink" href=""> Recent
+						beers </a>
 				</div>
 				<div class="ui-block-b">
 					<a data-role="button" href=""> Beers </a>
 				</div>
 				<div class="ui-block-c">
-					<a data-role="button" href=""> Bars </a>
+					<a data-role="button" href=""> Locations </a>
 				</div>
 			</div>
 
-			<div class="ui-grid-b my-breakpoint">
-				<div class="ui-block-a" style="text-align: center">
-					<img alt="" src="img/web/beer_pic_small.png">
-				</div>
-				<div class="ui-block-b people_name">
-					<a href="#beer" class="choseBeer" id="3">Zlatorog</a>
-				</div>
-
-
-				<div class="ui-block-a" style="text-align: center">
-					<img alt="" src="img/web/beer_pic_small.png">
-				</div>
-				<div class="ui-block-b people_name">
-					<a href="#beer" class="choseBeer" id="4">Guinness</a>
-				</div>
-
-				<div class="ui-block-a" style="text-align: center">
-					<img alt="" src="img/web/beer_pic_small.png">
-				</div>
-				<div class="ui-block-b people_name">Heineken</div>
-
-			</div>
+			<div class="ui-grid-b my-breakpoint recent_beers"></div>
 
 		</div>
 	</div>

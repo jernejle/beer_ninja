@@ -1,9 +1,13 @@
 package com.rateabeer.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.rateabeer.pojo.Beer;
@@ -23,6 +27,26 @@ public class BeerService {
 		Beer beer = bdao.getBeer(id);
 		if (beer == null) beer = new Beer();
 		return beer;
+	}
+	
+	@GET
+	@Path("/search")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Beer> searchBeers(@QueryParam("param") String param) {
+		if (param == null || param == "" || param.length() < 3) return new ArrayList<Beer>();
+		List<Beer> beers = bdao.searchBeers(param);
+		if (beers == null) beers = new ArrayList<Beer>();
+		return beers;
+	}
+	
+	@GET
+	@Path("/last")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Beer> getRandomBeers() {
+		int num = 15;
+		List<Beer> beers = bdao.getLast(num);
+		if (beers == null) beers = new ArrayList<Beer>();
+		return beers;
 	}
 	
 }
