@@ -69,9 +69,10 @@ public class CommentDao {
 		em = DB.getDBFactory().createEntityManager();
 		List<Comment> comments = null;
 		try {
-			Query q = em.createQuery("SELECT x FROM Comment x WHERE x.beer.id = " + beerId);
+			Query q = em.createQuery("SELECT x FROM Comment x WHERE x.beer.id = " + beerId + " ORDER BY x.id DESC");
 			comments = (List<Comment>) q.getResultList();
 		} catch (Exception e) {
+			System.out.println(e.toString());
 		} finally {
 			em.close();
 		}

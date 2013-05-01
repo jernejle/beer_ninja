@@ -148,6 +148,17 @@ a {
 	font-weight: bold;
 }
 
+.loadmore {
+	background-color: #444e5b;
+	border: 1px solid #606D80;
+	margin: 5px 4px 5px 4px;
+	text-align: center;
+	font-family: Verdana;
+	padding: 10px 0 10px 0;
+	border-bottom-right-radius: 10px;
+	border-bottom-left-radius: 10px;
+}
+
 @media all and (max-width: 18.750em) {
 	.my-breakpoint .ui-block-a,.my-breakpoint .ui-block-b,.my-breakpoint .ui-block-c,.my-breakpoint .ui-block-d,.my-breakpoint .ui-block-e
 		{

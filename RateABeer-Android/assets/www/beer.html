@@ -23,6 +23,9 @@
 	var chosenBeer = 0;
 	var restUrl = "http://10.0.2.2:8080/RateABeer_web/rest/";
 	var beerData = null;
+	var commentsPage = 1;
+	var commentsData = null;
+	var dialogMessage = false;
 </script>
 
 </head>
@@ -102,15 +105,15 @@
 				</div>
 				<div class="ui-block-b">
 					<div class="rateparam">
-						<span class="title">Laško Zlatorog</span><br>
+						<span class="title">Beer 1</span><br>
 
 						<div class="overallrating">
 							Overall
 							<div class="stars">
-								<img alt="" src="img/web/star_blank.png"> <img alt=""
-									src="img/web/star_blank.png"> <img alt=""
-									src="img/web/star_blank.png"> <img alt=""
-									src="img/web/star_blank.png"> <img alt=""
+								<img alt="" src="img/web/star.png"> <img alt=""
+									src="img/web/star.png"> <img alt=""
+									src="img/web/star.png"> <img alt=""
+									src="img/web/star.png"> <img alt=""
 									src="img/web/star.png">
 							</div>
 						</div>
@@ -123,10 +126,9 @@
 				</div>
 				<div class="ui-block-b">
 					<div class="stars" id="aroma_rating">
-						<img alt="" src="img/web/star_blank.png"> <img alt=""
-							src="img/web/star_blank.png"> <img alt=""
-							src="img/web/star_blank.png"> <img alt=""
-							src="img/web/star_blank.png"> <img alt=""
+						<img alt="" src="img/web/star.png"> <img alt=""
+							src="img/web/star.png"> <img alt="" src="img/web/star.png">
+						<img alt="" src="img/web/star.png"> <img alt=""
 							src="img/web/star.png">
 					</div>
 				</div>
@@ -135,10 +137,9 @@
 				</div>
 				<div class="ui-block-b">
 					<div class="stars" id="flavour_rating">
-						<img alt="" src="img/web/star_blank.png"> <img alt=""
-							src="img/web/star_blank.png"> <img alt=""
-							src="img/web/star_blank.png"> <img alt=""
-							src="img/web/star_blank.png"> <img alt=""
+						<img alt="" src="img/web/star.png"> <img alt=""
+							src="img/web/star.png"> <img alt="" src="img/web/star.png">
+						<img alt="" src="img/web/star.png"> <img alt=""
 							src="img/web/star.png">
 					</div>
 				</div>
@@ -147,10 +148,9 @@
 				</div>
 				<div class="ui-block-b">
 					<div class="stars" id="alcohol_content_rating">
-						<img alt="" src="img/web/star_blank.png"> <img alt=""
-							src="img/web/star_blank.png"> <img alt=""
-							src="img/web/star_blank.png"> <img alt=""
-							src="img/web/star_blank.png"> <img alt=""
+						<img alt="" src="img/web/star.png"> <img alt=""
+							src="img/web/star.png"> <img alt="" src="img/web/star.png">
+						<img alt="" src="img/web/star.png"> <img alt=""
 							src="img/web/star.png">
 					</div>
 				</div>
@@ -158,16 +158,7 @@
 
 			<div class="description">
 				<div style="text-align: left">Description</div>
-				<div class="descText">It is a long established fact that a
-					reader will be distracted by the readable content of a page when
-					looking at its layout. The point of using Lorem Ipsum is that it
-					has a more-or-less normal distribution of letters, as opposed to
-					using 'Content here, content here', making it look like readable
-					English. Many desktop publishing packages and web page editors now
-					use Lorem Ipsum as their default model text, and a search for
-					'lorem ipsum' will uncover many web sites still in their infancy.
-					Various versions have evolved over the years, sometimes by
-					accident, sometimes on purpose (injected humour and the like).</div>
+				<div class="descText"></div>
 			</div>
 
 			<div class="ui-grid-b my-breakpoint buttons">
@@ -175,7 +166,8 @@
 					<a data-role="button" data-theme="b" href="#beer"> Info </a>
 				</div>
 				<div class="ui-block-b">
-					<a data-role="button" href="#comments"> Comments </a>
+					<a data-role="button" id="commentshref" href="#comments">
+						Comments </a>
 				</div>
 				<div class="ui-block-c">
 					<a data-role="button" href="#search"> Search </a>
@@ -193,36 +185,9 @@
 		</div>
 		<div data-role="content" class="content">
 			<h1>Comments</h1>
-			<div class="comment">
-				<div class="commentimg">
-					<img alt="" src="img/web/avatar_pic.png">
-				</div>
-				<div class="comment-datetime">
-					jernej <br> <span class="date">14:23 24.3.2013</span>
-				</div>
-				<div class="comment-content">This beer is freakin'
-					EPIC!!!!1111</div>
-			</div>
-			<div class="comment">
-				<div class="commentimg">
-					<img alt="" src="img/web/avatar_pic.png">
-				</div>
-				<div class="comment-datetime">
-					jernej <br> <span class="date">14:23 24.3.2013</span>
-				</div>
-				<div class="comment-content">This beer is freakin'
-					EPIC!!!!1111</div>
-			</div>
-			<div class="comment">
-				<div class="commentimg">
-					<img alt="" src="img/web/avatar_pic.png">
-				</div>
-				<div class="comment-datetime">
-					user <br> <span class="date">14:23 24.3.2013</span>
-				</div>
-				<div class="comment-content">Laško je zakon !</div>
-			</div>
+			<div class="allcomments"></div>
 
+			<div class="loadmore">Load more comments</div>
 
 			<div class="ui-grid-b my-breakpoint buttons">
 				<div class="ui-block-a">
@@ -237,6 +202,8 @@
 				</div>
 			</div>
 		</div>
+		<a id='dialogLink' href="#dialog" data-rel="dialog"
+			data-transition="pop" style='display: none;'></a>
 	</div>
 
 	<!--  Share beer -->
@@ -278,5 +245,16 @@
 			</div>
 		</div>
 	</div>
+
+	<!-- Dialog  -->
+	<div data-role="page" id="dialog">
+		<div data-role="header">
+			<h1 id="dialogtitle">Message</h1>
+		</div>
+		<div data-role="content" id="dialogText"></div>
+	</div>
+
+
+
 </body>
 </html>
