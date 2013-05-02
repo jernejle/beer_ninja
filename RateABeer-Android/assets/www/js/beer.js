@@ -1,10 +1,15 @@
 $(function() {
+	var beerLocations = null;
+
 	$(document).bind("mobileinit", function() {
 		// Make your jQuery Mobile framework configuration changes here!
 		$.mobile.allowCrossDomainPages = true;
 	});
 
 	$("#recentBeersLink").click(function() {
+		$.fn.setButtonTheme($(this), true);
+		$.fn.setButtonTheme($("#locationsHref"), false);
+		$.fn.setButtonTheme($("#beersHref"), false);
 		$.fn.getRecentBeers();
 	});
 
@@ -24,6 +29,74 @@ $(function() {
 		});
 	};
 
+	$("#beerLocations").click(function() {
+		beerLocations = null;
+		$('#map_canvas').gmap('destroy');
+		$.ajax({
+			type : "GET",
+			url : restUrl + "location/beer/" + chosenBeer,
+			dataType : "json",
+			processData : false,
+			success : function(data) {
+				$.fn.parseBeerLocations(data);
+			},
+			error : function(xhr, textStatus, errorThrown) {
+				alert("Napaka: " + xhr + " " + xhr.status);
+				alert(xhr.responseText);
+			}
+		});
+	});
+
+	$("#beersHref").click(function() {
+		$.fn.setButtonTheme($(this), true);
+		$.fn.setButtonTheme($("#locationsHref"), false);
+		$.fn.setButtonTheme($("#recentBeersLink"), false);
+
+		var work = false;
+		$(".search-input").click(function() {
+			$(this).val('');
+		});
+		$(".search-input").keypress(function() {
+			var val = $(this).val();
+			if (val.length > 2 && !work) {
+				work = true;
+				setTimeout(function() {
+					$.ajax({
+						type : "GET",
+						url : restUrl + "beer/search/",
+						dataType : "json",
+						data : {
+							param : val
+						},
+						success : function(data) {
+							$.fn.parseBeers(data, $(".recent_beers"));
+							work = false;
+						},
+						error : function(xhr, textStatus, errorThrown) {
+							alert("Napaka: " + xhr + " " + xhr.status);
+							alert(xhr.responseText);
+						}
+					});
+				}, 1000);
+			}
+		});
+	});
+
+	$("#locationsHref").click(function() {
+		$.fn.setButtonTheme($(this), true);
+		$.fn.setButtonTheme($("#beersHref"), false);
+		$.fn.setButtonTheme($("#recentBeersLink"), false);
+	});
+
+	$.fn.setButtonTheme = function(link, active) {
+		var newTheme = (active ? "b" : "c");
+
+		link.removeClass().addClass(
+				"ui-btn ui-shadow ui-btn-corner-all ui-btn-hover-" + newTheme
+						+ " ui-btn-up-" + newTheme + " ui-btn-up-" + newTheme);
+		link.attr("data-theme", newTheme).trigger("mouseout");
+	};
+
 	$.fn.bindChoseBeer = function() {
 		$(".choseBeer").click(function() {
 			chosenBeer = $(this).attr("id");
@@ -40,35 +113,6 @@ $(function() {
 			}
 		});
 	};
-
-	var work = false;
-	$(".search-input").click(function() {
-		$(this).val('');
-	});
-	$(".search-input").keypress(function() {
-		var val = $(this).val();
-		if (val.length > 2 && !work) {
-			work = true;
-			setTimeout(function() {
-				$.ajax({
-					type : "GET",
-					url : restUrl + "beer/search/",
-					dataType : "json",
-					data : {
-						param : val
-					},
-					success : function(data) {
-						$.fn.parseBeers(data,$(".recent_beers"));
-						work = false;
-					},
-					error : function(xhr, textStatus, errorThrown) {
-						alert("Napaka: " + xhr + " " + xhr.status);
-						alert(xhr.responseText);
-					}
-				});
-			}, 1000);
-		}
-	});
 
 	$.fn.getBeer = function(beerId) {
 		$.ajax({
@@ -119,10 +163,12 @@ $(function() {
 
 	$.fn.parseCommentsJson = function(jsonData) {
 		if (jsonData != null) {
+			jsonData = (jsonData.comment instanceof Array ? jsonData.comment : jsonData);
+
 			commentsData = jsonData;
 			$
 					.each(
-							jsonData.comment,
+							jsonData,
 							function(i, item) {
 								$("<div></div>")
 										.addClass("comment")
@@ -139,9 +185,8 @@ $(function() {
 							});
 		} else {
 			dialogMessage = true;
-			$("#dialogText").html("Ni vec komentarjev za prikaz");
-			$("#dialogLink").click();
-			$(".loadmore").unbind();
+			$("#dialogText").html("No more comments to load");
+			$("#dialogLink").trigger('click');
 		}
 	};
 
@@ -164,12 +209,8 @@ $(function() {
 		div.empty();
 		var jsonObj = null;
 		if (data == null) return;
-		if (data.beer.length > 0) {
-			jsonObj = data.beer;
-		} else if (data.beer.length == undefined) {
-			jsonObj = data;
-		}
-	
+		jsonObj = (data.beer instanceof Array ? data.beer : data);
+
 		$.each(jsonObj, function(i, item) {
 			$("<div style='text-align: center'></div>").addClass("ui-block-a")
 					.html("<img src='img/web/beer_pic_small.png' />").appendTo(
@@ -180,6 +221,50 @@ $(function() {
 		});
 		$.fn.bindChoseBeer();
 	};
+
+	$.fn.parseBeerLocations = function(data) {
+		$(".allLocations").empty();
+		if (data == null) return;
+		
+		var jsonData = (data.location instanceof Array ? data.location : data);
+
+		beerLocations = new Array();
+		$.each(jsonData, function(i, item) {
+			$("<div></div>").addClass("location " + item.lat + ";" + item.lon)
+					.html(
+							"<img src='img/web/google-maps-icon.png' /><div class='location-text'>"
+									+ item.name + " (Checked in by "
+									+ item.user.username + ")</div>").appendTo(
+							$(".allLocations"));
+
+			mapLocation = new Object();
+			mapLocation.lat = item.lat;
+			mapLocation.lon = item.lon;
+			mapLocation.user = item.user.username;
+			beerLocations.push(mapLocation);
+		});
+	};
+
+	$("#mapsPage").on("pageshow", function(event, ui) {
+		setTimeout(function() {
+			$('#map_canvas').gmap().bind('init', function(ev, map) {
+				if (beerLocations != null) {
+					for ( var i = 0; i < beerLocations.length; i++) {
+						locObj = beerLocations[i];
+
+						$('#map_canvas').gmap('addMarker', {
+							'position' : locObj.lat + "," + locObj.lon,
+							'bounds' : true
+						}).click(function() {
+							$('#map_canvas').gmap('openInfoWindow', {
+								'content' : locObj.user
+							}, this);
+						});
+					}
+				}
+			});
+		}, 200);
+	});
 
 	$.fn.setRating = function(div, rating) {
 		div.empty();
