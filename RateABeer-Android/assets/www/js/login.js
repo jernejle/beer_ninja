@@ -11,49 +11,78 @@ function loginUser() {
 	        password  : password     
 	    });
 	
+	 //var loginURI = "http://localhost:8080/RateABeer_web/rest/user/login/?userData="+userData;
+	 
+	loginURI+=userName+"/"+password;
+	 
 	 console.log('Username: ' + userName);
 	 console.log('Password: ' + password);
-	 console.log(loginURI);
-	 console.log(userData);
+	 console.log('URL: ' + loginURI);
+	 console.log('Data: ' + userData);
 	 
-	$.ajax({
-		  type        : "GET", 
-		  contentType : "application/json",
-		  dataType: 'jsonp',
-		  jsonp: 'callback',
-		  url         : loginURI,  
-		  data        : userData, 
-		  processData : false,    
-		  success     : function(data){ 
-			  console.log('Klic uspesen.');
-		    alert("OK"); 
-		  },
-		  error       : function(xhr, textStatus, errorThrown){ 
-			  console.log(textStatus);
-			  console.log(xhr);
-		    alert("Napaka: " + xhr + " " + xhr.status);
-		    alert(xhr.responseText);
-		  } 
-	 });
-	
+	 
+//	 $.ajax('http://localhost:8080/RateABeer_web/rest/user/login/', {
+//			beforeSend: function (xhr) {
+//				$.mobile.showPageLoadingMsg();
+//			},
+//			complete: function () {
+//				$.mobile.hidePageLoadingMsg();
+//			},
+//
+//			contentType: 'application/json',
+//			dataType: 'jsonp',
+//			jsonp: 'callback',
+//			type: 'POST',
+//			error: function (xhr, ajaxOptions, thrownError) {
+//				alert(xhr.status);
+//				alert(xhr.responseText);			
+//			},
+//			
+//			success: function (data) {
+//				alert(data);
+//			}
+//		});
+	 
 //	$.ajax({
 //		  type        : "POST", 
 //		  contentType : "application/json",
-//		  dataType: "json",
+//		  dataType: 'jsonp',
+//		  jsonp: 'callback',
 //		  url         : loginURI,  
 //		  data        : userData, 
 //		  processData : false,    
-//		  success     : function(data){ 
+//		  success     : function(data) { 
 //			  console.log('Klic uspesen.');
 //		    alert("OK"); 
 //		  },
-//		  error       : function(xhr, textStatus, errorThrown){ 
+//		  error       : function(xhr, textStatus, errorThrown) { 
 //			  console.log(textStatus);
 //			  console.log(xhr);
 //		    alert("Napaka: " + xhr + " " + xhr.status);
 //		    alert(xhr.responseText);
 //		  } 
 //	 });
+	
+	$.ajax({
+		  type        : "POST", 
+		  contentType : "application/json",
+		  dataType: "jsonp",
+		  jsonp: 'callback',
+		  url         : loginURI,  
+		  //data        : userData, 
+		  processData : false,    
+		  success     : function(data){ 
+			  console.log('Klic uspesen.');
+		    alert("OK"); 
+		    console.log(data);
+		  },
+		  error       : function(xhr, textStatus, errorThrown){ 
+			  console.log(textStatus);
+			  console.log(xhr);
+			  alert("Napaka: " + xhr + " " + xhr.status);
+			  alert(xhr.responseText);
+		  } 
+	 });
 
 };
 
