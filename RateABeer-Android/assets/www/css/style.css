@@ -205,3 +205,8 @@ form {
 	border-radius: 15px;
 	color: black;
 }
+
+.comment_buttons .ui-btn-text {
+	padding: 10px;
+	font-style: normal;
+}

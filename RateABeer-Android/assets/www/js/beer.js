@@ -29,6 +29,47 @@ $(function() {
 		});
 	};
 
+	$.fn.addCommentBind = function() {
+		$("#sendCommentHref").unbind().click(
+				function() {
+					var val = $("#commentInput").val();
+					if (val.length < 5) {
+						$("#dialogText").html("Content is not long enough!");
+						$("#dialogLink").trigger('click');
+						return;
+					}
+					$(this).unbind();
+					var comObj = new Object();
+					var dateObj = new Date();
+					var dateStr = dateObj.getFullYear() + "-"
+							+ parseInt(dateObj.getMonth() + 1) + "-"
+							+ dateObj.getDate() + " " + dateObj.getHours()
+							+ ":" + dateObj.getMinutes() + ":"
+							+ dateObj.getSeconds();
+					comObj.author = new Object();
+					comObj.author.username = "testni";
+					comObj.author.id = "1";
+					comObj.comment = val;
+					comObj.date = dateStr;
+					var jsonObj = JSON.stringify(comObj);
+					var div = $.fn.returnCommentDiv(comObj);
+					$(".allcomments").prepend(div);
+					$.ajax({
+						type : "POST",
+						contentType : "application/json",
+						url : restUrl + "comment/newcomment/" + chosenBeer,
+						processData : false,
+						data : jsonObj
+					}).done(function() {
+						$(".allcomments").prepend(div);
+					});
+				});
+	};
+
+	$("#resetHref").click(function() {
+		$("#commentInput").val('');
+	});
+
 	$("#beerLocations").click(function() {
 		beerLocations = null;
 		$('#map_canvas').gmap('destroy');
@@ -137,6 +178,8 @@ $(function() {
 	};
 
 	$("#commentshref").click(function() {
+		$.fn.addCommentBind();
+		$("#commentInput").val('');
 		if (dialogMessage == false) {
 			$.fn.getComments(chosenBeer);
 		}
@@ -163,31 +206,32 @@ $(function() {
 
 	$.fn.parseCommentsJson = function(jsonData) {
 		if (jsonData != null) {
-			jsonData = (jsonData.comment instanceof Array ? jsonData.comment : jsonData);
+			jsonData = (jsonData.comment instanceof Array ? jsonData.comment
+					: jsonData);
 
 			commentsData = jsonData;
-			$
-					.each(
-							jsonData,
-							function(i, item) {
-								$("<div></div>")
-										.addClass("comment")
-										.html(
-												"<div class='commentimg'><img alt='' src='img/web/avatar_pic.png' /></div><div class='comment-datetime'>"
-														+ item.author.username
-														+ "<br> <span class='date'>"
-														+ item.date
-														+ "</span></div><div class='comment-content'>"
-														+ item.comment
-														+ "</div>").hide()
-										.appendTo($(".allcomments"))
-										.slideDown();
-							});
+			$.each(jsonData, function(i, item) {
+				$.fn.returnCommentDiv(item).appendTo($(".allcomments")).hide()
+						.slideDown();
+			});
 		} else {
 			dialogMessage = true;
+			$(".loadmore").unbind();
 			$("#dialogText").html("No more comments to load");
 			$("#dialogLink").trigger('click');
 		}
+	};
+
+	$.fn.returnCommentDiv = function(item) {
+		return $("<div></div>")
+				.addClass("comment")
+				.html(
+						"<div class='commentimg'><img alt='' src='img/web/avatar_pic.png' /></div><div class='comment-datetime'>"
+								+ item.author.username
+								+ "<br> <span class='date'>"
+								+ item.date
+								+ "</span></div><div class='comment-content'>"
+								+ item.comment + "</div>");
 	};
 
 	$.fn.parseBeerJson = function(jsonData) {
@@ -208,7 +252,8 @@ $(function() {
 	$.fn.parseBeers = function(data, div) {
 		div.empty();
 		var jsonObj = null;
-		if (data == null) return;
+		if (data == null)
+			return;
 		jsonObj = (data.beer instanceof Array ? data.beer : data);
 
 		$.each(jsonObj, function(i, item) {
@@ -224,8 +269,9 @@ $(function() {
 
 	$.fn.parseBeerLocations = function(data) {
 		$(".allLocations").empty();
-		if (data == null) return;
-		
+		if (data == null)
+			return;
+
 		var jsonData = (data.location instanceof Array ? data.location : data);
 
 		beerLocations = new Array();

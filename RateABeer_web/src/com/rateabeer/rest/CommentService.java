@@ -1,5 +1,6 @@
 package com.rateabeer.rest;
 
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -7,18 +8,26 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
+import com.rateabeer.pojo.Beer;
 import com.rateabeer.pojo.Comment;
+import com.rateabeer.pojo.User;
+import com.ratebeer.dao.BeerDao;
 import com.ratebeer.dao.CommentDao;
+import com.ratebeer.dao.UserDao;
 
 @Path("/comment")
 public class CommentService {
 
 	CommentDao comdao = new CommentDao();
+	BeerDao bdao = new BeerDao();
+	UserDao udao = new UserDao();
 	
 	@GET
 	@Path("/beer/{id}")
@@ -44,9 +53,30 @@ public class CommentService {
 	}
 	
 	@POST
-	@Path("/newcomment")
+	@Path("/newcomment/{id}")
 	@Consumes(MediaType.APPLICATION_JSON)
-	public void addComment(Comment c) {
+	public void addComment(@PathParam("id") int beerId, Comment c) {
+		int userId = 0;
+		try {
+			userId = c.getAuthor().getId();
+		} catch (Exception e) {
+			return;
+		}
+		Beer beer = bdao.getBeer(beerId);
+		User u = udao.getUser(userId);
+		if (beer == null || u == null) return;
+		java.util.Date date = new java.util.Date();
+		Date dsql = new Date(date.getTime());
+		c.setDate(dsql);
+		c.setAuthor(u);
+		c.setBeer(beer);
+		comdao.addComment(c);
+	}
+	
+	@PUT
+	@Path("/edit/{id}")
+	@Consumes(MediaType.APPLICATION_JSON)
+	public void updateComment(@PathParam("id") int commentId, Comment c) {
 		System.out.println(c.getComment());
 	}
 	
