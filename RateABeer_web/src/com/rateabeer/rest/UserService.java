@@ -27,33 +27,38 @@ public class UserService {
 		return u;
 	}
 	
-	@POST
-	@Path("/login")
+	@GET
+	@Path("/login/{username}/{password}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({"application/javascript"})
-	public JSONWithPadding login(User userData, @QueryParam("callback")String callback) {
-		User user = new User();
-
-		System.out.println("Podan username: " + userData);
+	public JSONWithPadding login(@PathParam("username") String username, @PathParam("username") String password, @QueryParam("callback")String callback) {
+		User user = null;
+		System.out.println("Callback: " + callback);
+		System.out.println("Podan username: " + username);
 //		System.out.println("Podan password: " + password);
 		
-//		user = udao.loginUser(userName, password);
+		//u1 : u1
+		user = udao.loginUser(username, password);
 		
-		return new JSONWithPadding(user);
+		if (user == null) {
+			user = new User();
+		}
+		
+		return new JSONWithPadding(user, callback);
 	}
 	
 	
-//	@POST
-//	@Path("/login")
-//	@Consumes(MediaType.APPLICATION_JSON)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public User loginJSON(User userData) {
-//		User user = new User();
-//
-//		System.out.println("Podano: " + userData);
-//		
-////		user = udao.loginUser(userName, password);
-//		
-//		return user;
-//	}
+	@POST
+	@Path("/login")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public User loginJSON(User userData) {
+		User user = new User();
+
+		System.out.println("Podano: " + userData);
+		
+//		user = udao.loginUser(userName, password);
+		
+		return user;
+	}
 }
