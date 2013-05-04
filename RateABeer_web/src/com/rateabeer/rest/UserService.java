@@ -8,10 +8,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+
 import com.rateabeer.pojo.User;
 import com.ratebeer.dao.UserDao;
 import com.sun.jersey.api.json.JSONWithPadding;
-import com.sun.jersey.json.impl.provider.entity.JSONObjectProvider;
 
 @Path("/user")
 public class UserService {
@@ -27,16 +27,14 @@ public class UserService {
 		return u;
 	}
 	
+	// WS for jsonp request
 	@GET
 	@Path("/login/{username}/{password}")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces({"application/javascript"})
 	public JSONWithPadding login(@PathParam("username") String username, @PathParam("username") String password, @QueryParam("callback")String callback) {
 		User user = null;
-		System.out.println("Callback: " + callback);
-		System.out.println("Podan username: " + username);
-//		System.out.println("Podan password: " + password);
-		
+
 		//u1 : u1
 		user = udao.loginUser(username, password);
 		
@@ -53,11 +51,33 @@ public class UserService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public User loginJSON(User userData) {
-		User user = new User();
-
 		System.out.println("Podano: " + userData);
+		System.out.println("Username: " + userData.getUsername());
+		System.out.println("Password: " + userData.getPassword());
 		
-//		user = udao.loginUser(userName, password);
+		User user = udao.loginUser(userData.getUsername(), userData.getPassword());
+
+		if (user == null)
+			user = new User();
+		
+		return user;
+	}
+	
+	@POST
+	@Path("/register")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public User addUser(User userData) {
+		System.out.println("Podano: " + userData);
+		System.out.println("Username: " + userData.getUsername());
+		System.out.println("Password: " + userData.getPassword());
+		
+		User user = udao.addUser(userData);
+
+		if (user == null)
+			user = new User();
+		
+		System.out.println("Generiran ID po registraciji: " + user.getId());
 		
 		return user;
 	}

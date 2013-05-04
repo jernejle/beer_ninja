@@ -11,19 +11,21 @@ public class UserDao {
 
 	private EntityManager em;
 
-	public boolean addUser(User user) {
+	public User addUser(User user) {
 		em = DB.getDBFactory().createEntityManager();
-		boolean added = false;
+
 		try {
 			em.getTransaction().begin();
 			em.persist(user);
+			em.flush();
 			em.getTransaction().commit();
-			added = true;
 		} catch (Exception e) {
+			user = null;
 		} finally {
 			em.close();
 		}
-		return added;
+
+		return user;
 	}
 
 	public User getUser(int id) {
