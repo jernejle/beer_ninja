@@ -1,120 +1,95 @@
 // http://localhost:8080/RateABeer_web/rest/user/login/test/123465
-var loginURI = "http://localhost:8080/RateABeer_web/rest/user/login/";
+var loginURI = "http://192.168.1.2:8080/RateABeer_web/rest/user/login/";
 
 function loginUser() {
+	
+	var baza = new DBStorage();
+	baza.setup(null);
 	
 	var userName = $('#userName').val();
 	var password = $('#password').val();
 
 	 var userData = JSON.stringify({
-	        username    : userName,
-	        password  : password     
+		 	id : -1,
+		 	name : '',
+		 	lastName : '',
+	        username : userName,
+	        password : password,
+	        email : '',
+	        fbid : 0,
+	        comments: [],
+	        ratings:[],
+	        locations:[],
+	        favouriteBeers:[],
+	        evemts:[]
 	    });
-	
-	 //var loginURI = "http://localhost:8080/RateABeer_web/rest/user/login/?userData="+userData;
-	 
-	loginURI+=userName+"/"+password;
+
+	 loginURI = loginURI + userName+"/"+password;
 	 
 	 console.log('Username: ' + userName);
 	 console.log('Password: ' + password);
 	 console.log('URL: ' + loginURI);
 	 console.log('Data: ' + userData);
 	 
-	 
-//	 $.ajax('http://localhost:8080/RateABeer_web/rest/user/login/', {
-//			beforeSend: function (xhr) {
-//				$.mobile.showPageLoadingMsg();
-//			},
-//			complete: function () {
-//				$.mobile.hidePageLoadingMsg();
-//			},
-//
-//			contentType: 'application/json',
-//			dataType: 'jsonp',
-//			jsonp: 'callback',
-//			type: 'POST',
-//			error: function (xhr, ajaxOptions, thrownError) {
-//				alert(xhr.status);
-//				alert(xhr.responseText);			
-//			},
-//			
-//			success: function (data) {
-//				alert(data);
-//			}
-//		});
+	 $.ajax({
+			type : "POST",
+			contentType : "application/json",
+			url : "http://192.168.1.2:8080/RateABeer_web/rest/user/login",
+			processData : false,
+			data : userData,
+			success : function(data) { 
+
+				if (data.username === userName) {
+				
+					db = new DBStorage();
+				    db.setup();
+				    
+				    db.saveEntry(data, loginSuccessful());
+				}
+				
+				console.log('Klic uspesen.');
+				console.log('ID: ' + data.id);
+				console.log('Name: ' + data.name);
+			  },
+			  error       : function(xhr, textStatus, errorThrown){ 
+				  console.log(textStatus);
+				  console.log(xhr);
+				  alert("Napaka: " + xhr + " " + xhr.status);
+				  alert(xhr.responseText);
+			  } 
+		});
 	 
 //	$.ajax({
 //		  type        : "POST", 
 //		  contentType : "application/json",
-//		  dataType: 'jsonp',
+//		  dataType: "jsonp",
 //		  jsonp: 'callback',
 //		  url         : loginURI,  
-//		  data        : userData, 
+//		  //data        : userData, 
 //		  processData : false,    
-//		  success     : function(data) { 
+//		  success     : function(data){ 
 //			  console.log('Klic uspesen.');
 //		    alert("OK"); 
+//		    console.log(data);
 //		  },
-//		  error       : function(xhr, textStatus, errorThrown) { 
+//		  error       : function(xhr, textStatus, errorThrown){ 
 //			  console.log(textStatus);
 //			  console.log(xhr);
-//		    alert("Napaka: " + xhr + " " + xhr.status);
-//		    alert(xhr.responseText);
+//			  alert("Napaka: " + xhr + " " + xhr.status);
+//			  alert(xhr.responseText);
 //		  } 
 //	 });
-	
-	$.ajax({
-		  type        : "POST", 
-		  contentType : "application/json",
-		  dataType: "jsonp",
-		  jsonp: 'callback',
-		  url         : loginURI,  
-		  //data        : userData, 
-		  processData : false,    
-		  success     : function(data){ 
-			  console.log('Klic uspesen.');
-		    alert("OK"); 
-		    console.log(data);
-		  },
-		  error       : function(xhr, textStatus, errorThrown){ 
-			  console.log(textStatus);
-			  console.log(xhr);
-			  alert("Napaka: " + xhr + " " + xhr.status);
-			  alert(xhr.responseText);
-		  } 
-	 });
 
 };
 
-$(document).ready(function () {
-	
+function loginSuccessful() {
+	window.location.replace('index.html');
+};
+
+function onDeviceReady() {	
 	$('#loginButton').click(loginUser);
-	
-//	$.ajax(GetAllContactsUri, {
-//		beforeSend: function (xhr) {
-//			$.mobile.showPageLoadingMsg();
-//		},
-//		complete: function () {
-//			$.mobile.hidePageLoadingMsg();
-//		},
-//
-//		contentType: 'application/json',
-//		dataType: 'jsonp',
-//		jsonp: 'callback',
-//		type: 'GET',
-//		error: function (xhr, ajaxOptions, thrownError) {
-//			alert(xhr.status);
-//			alert(xhr.responseText);			
-//		},
-//		
-//		success: function (data) {
-//			var result = data.GetAllContactsResult;
-//
-//			$.each(result, function (index, output) {
-//				$('#contactsList').append('<li><h2>' + output.FirstName + ' ' + output.LastName + '</h2><p>' + output.PhoneNumber + '</p></li>');
-//			});
-//
-//			$('#contactsList').listview('refresh');
-//		}
-//	});
+}
+
+$(document).ready(function () {	
+	document.addEventListener("deviceready", onDeviceReady, false);
 });
