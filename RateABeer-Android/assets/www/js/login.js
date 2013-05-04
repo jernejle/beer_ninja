@@ -1,5 +1,5 @@
 // http://localhost:8080/RateABeer_web/rest/user/login/test/123465
-var loginURI = "http://192.168.1.2:8080/RateABeer_web/rest/user/login/";
+var loginURI = restUrl + "user/login/";
 
 function loginUser() {
 	
@@ -39,11 +39,9 @@ function loginUser() {
 			data : userData,
 			success : function(data) { 
 
-				if (data.username === userName) {
-				
+				if (data.username === userName) {				
 					db = new DBStorage();
-				    db.setup();
-				    
+				    db.setup();				    
 				    db.saveEntry(data, loginSuccessful());
 				}
 				

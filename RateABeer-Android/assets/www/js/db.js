@@ -1,5 +1,5 @@
 // Source: http://www.raymondcamden.com/index.cfm/2013/3/4/PhoneGap-Sample--Diary-Database-and-Camera-support
-function DBStorage() { }
+function DBStorage() { that = this; }
 
 DBStorage.prototype.setup = function(callback) {	 
 
@@ -35,7 +35,7 @@ DBStorage.prototype.initDB = function(t) {
 	t.executeSql('create table if not exists user(id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, username TEXT, name TEXT, lastname TEXT, fbid TEXT)');
 }
  
-DBStorage.prototype.getEntries = function(start,callback) {
+DBStorage.prototype.getEntries = function(callback) {
 	console.log('Running getEntries');
 	if(arguments.length === 1) callback = arguments[0];
  
@@ -44,6 +44,7 @@ DBStorage.prototype.getEntries = function(start,callback) {
 			t.executeSql('select id, email, username, name, lastname, fbid from user order by id asc',[],
 				function(t,results) {
 					callback(that.fixResults(results));
+//					return that.fixResults(results)
 				},this.dbErrorHandler);
 		}, this.dbErrorHandler);
  
@@ -74,18 +75,18 @@ console.dir(data);
 }
  
 //Utility to convert record sets into array of obs
-//DBStorage.prototype.fixResults = function(res) {
-//	var result = [];
-//	for(var i=0, len=res.rows.length; i<len; i++) {
-//		var row = res.rows.item(i);
-//		result.push(row);
-//	}
-//	return result;
-//}
+DBStorage.prototype.fixResults = function(res) {
+	var result = [];
+	for(var i=0, len=res.rows.length; i<len; i++) {
+		var row = res.rows.item(i);
+		result.push(row);
+	}
+	return result;
+}
  
 //I'm a lot like fixResults, but I'm only used in the context of expecting one row, so I return an ob, not an array
-//DBStorage.prototype.fixResult = function(res) {
-//	if(res.rows.length) {
-//		return res.rows.item(0);
-//	} else return {};
-//}
+DBStorage.prototype.fixResult = function(res) {
+	if(res.rows.length) {
+		return res.rows.item(0);
+	} else return {};
+}
