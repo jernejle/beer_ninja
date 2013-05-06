@@ -59,18 +59,38 @@ function onDeviceReady() {
     	
     	if (results.length > 0) {
     		
-    		alert("Hello, " + results[0].username);
+    		var logoutButton = "<a href='#' data-role='button' data-mini='true' id='logoutButton'>Odjava</a>";
     		
-    	}
+    		//alert("Hello, " + results[0].username);
+
+    		$('#footerContent').html("Prijavljeni ste kot " + results[0].username);
+    		$('#userStatusButton').html('<a id="logoutButton" href="#" data-role="button" data-mini="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="a" class="ui-btn ui-shadow ui-btn-corner-all ui-mini ui-btn-hover-a ui-btn-up-a"><span class="ui-btn-inner"><span class="ui-btn-text">Odjava</span></span></a>');
     	
-//    	console.log('Reading results...');
-//    	for(var i=0, len=results.length; i<len; i++) {
-//    		var row = results[i];
-//    		console.log(row.username);
-//    	}
+
+    		$('#logoutButton').click(function() {
+    			db.deleteEntry({id:results[0].id}, function() {
+    				console.log('Izbrisano');
+    				alert('User logged out.');
+    				window.location.replace('index.html');
+    			})
+    		});
+    	
+    	
+    	} else {
+    		$('#footerContent').html("");
+    		$('#userStatusButton').html('<a id="loginButton" href="#" data-role="button" data-mini="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="a" class="ui-btn ui-shadow ui-btn-corner-all ui-mini ui-btn-hover-a ui-btn-up-a"><span class="ui-btn-inner"><span class="ui-btn-text">Prijava</span></span></a>');
+    	
+    		$('#loginButton').click(function() {
+    			window.location.replace('login.html');
+    		});
+    	}
+
     });
 }
 
 $(document).ready(function () {	
+	//$('#userStatusButton').html("<a data-role='button' data-mini='true' id='logoutButton' class='ui-btn' href='#'>Odjava</a>");
+	
 	document.addEventListener("deviceready", onDeviceReady, false);
+	
 });

@@ -7,22 +7,22 @@ DBStorage.prototype.setup = function(callback) {
 	this.db.transaction(this.initDB, this.dbErrorHandler, this.dbSuccessHandler);
 	
 	// Sample data
-	var data = {
-			username : 'u2',
-			name : 'name u2',
-			lastname : 'last name u2',
-			email : 'u2@email',
-			fbid : '0',
-			id : 2
-	}
-	
-	this.saveEntry(data, this.dbSuccessHandler);
+//	var data = {
+//			username : 'u2',
+//			name : 'name u2',
+//			lastname : 'last name u2',
+//			email : 'u2@email',
+//			fbid : '0',
+//			id : 2
+//	}
+//	
+//	this.saveEntry(data, this.dbSuccessHandler);
 }
  
 // Generic error handler
 DBStorage.prototype.dbErrorHandler = function(e) {
 	console.log('DB Error');
-	console.dir(e);
+	console.dir(JSON.stringify(e));
 }
 
 // Generic success handler
@@ -45,7 +45,7 @@ DBStorage.prototype.getEntries = function(callback) {
 				function(t,results) {
 					callback(that.fixResults(results));
 //					return that.fixResults(results)
-				},this.dbErrorHandler);
+				}, this.dbErrorHandler);
 		}, this.dbErrorHandler);
  
 }
@@ -74,6 +74,17 @@ console.dir(data);
 		}, this.dbErrorHandler);
 }
  
+DBStorage.prototype.deleteEntry = function(data, callback) {
+	this.db.transaction(
+			function(t) {
+				t.executeSql('DELETE FROM user WHERE id=?', 
+						[data.id],
+						function() { 
+							callback();
+						}, this.dbErrorHandler);
+			}, this.dbErrorHandler);
+}
+
 //Utility to convert record sets into array of obs
 DBStorage.prototype.fixResults = function(res) {
 	var result = [];
