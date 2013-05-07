@@ -66,6 +66,8 @@ function onDeviceReady() {
     		$('#footerContent').html("Prijavljeni ste kot " + results[0].username);
     		$('#userStatusButton').html('<a id="logoutButton" href="#" data-role="button" data-mini="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="a" class="ui-btn ui-shadow ui-btn-corner-all ui-mini ui-btn-hover-a ui-btn-up-a"><span class="ui-btn-inner"><span class="ui-btn-text">Odjava</span></span></a>');
     	
+    		// Uporabnika se shrani v sejo
+    		sessionStorage.userId = results[0].username.id;
 
     		$('#logoutButton').click(function() {
     			db.deleteEntry({id:results[0].id}, function() {
