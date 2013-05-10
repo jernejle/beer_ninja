@@ -6,6 +6,7 @@ import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import com.rateabeer.pojo.Beer;
 import com.rateabeer.pojo.Location;
 import com.ratebeer.db.DB;
 
@@ -34,6 +35,7 @@ public class LocationDao {
 		try {
 			loc = em.find(Location.class, id);
 		} catch (Exception e) {
+			System.out.println("exception");
 		} finally {
 			em.close();
 		}
@@ -90,6 +92,37 @@ public class LocationDao {
 		} finally {
 			em.close();
 		}
+	}
+	
+	public List<Location> getLocationsAndBeers(String param) {
+		em = DB.getDBFactory().createEntityManager();
+		List<Location> locations = null;
+		try {
+			Query q = em.createQuery("SELECT l FROM Location l INNER JOIN FETCH l.beer WHERE l.name = :name", Location.class);
+			q.setParameter("name",param);
+			locations = (List<Location>)q.getResultList();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			em.close();
+		}
+		return locations;
+	}
+	
+	public List<Location> searchLocations(String param, int rowNum) {
+		em = DB.getDBFactory().createEntityManager();
+		List<Location> locations = null;
+		try {
+			String limitStr = (rowNum > 0) ? "LIMIT " + rowNum : "";
+			Query q = em.createNativeQuery("SELECT l.name, l.id, l.lat, l.lon FROM Location l WHERE UPPER(l.name) LIKE ?1 " + limitStr, Location.class);
+			q.setParameter(1, "%" + param.toUpperCase() + "%");
+			locations = (List<Location>)q.getResultList();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			em.close();
+		}
+		return locations;
 	}
 	
 	@PreDestroy

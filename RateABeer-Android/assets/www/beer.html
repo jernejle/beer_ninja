@@ -25,7 +25,7 @@
 <title></title>
 <script>
 	var chosenBeer = 0;
-// 	var restUrl = "http://10.0.2.2:8080/RateABeer_web/rest/";
+	var chosenLocation = 0;
 	var beerData = null;
 	var commentsPage = 1;
 	var commentsData = null;
@@ -209,6 +209,31 @@
 			data-transition="pop" style='display: none;'></a>
 	</div>
 
+	<!-- Beers on specific location -->
+	<div data-role="page" id="beersOnLocations">
+		<div data-theme="a" data-role="header">
+			<div style="text-align: center">
+				<img style="width: 320px; height: 38px" src="img/logo.png" />
+			</div>
+		</div>
+		<div data-role="content" class="content">
+			<h1>Beers on location</h1>
+			<div class="beersOnLocation"></div>
+
+			<div class="ui-grid-b my-breakpoint buttons">
+				<div class="ui-block-a">
+					<a data-role="button" href="#beer"> Info </a>
+				</div>
+				<div class="ui-block-b">
+					<a data-role="button" class="locationMaps" href="#mapsPage">Maps</a>
+				</div>
+				<div class="ui-block-c">
+					<a data-role="button" href="#search"> Search </a>
+				</div>
+			</div>
+		</div>
+	</div>
+
 	<!--  Share beer -->
 	<div data-role="page" id="share">
 		<div data-theme="a" data-role="header">
@@ -273,7 +298,7 @@
 					<a data-role="button" href="#beer"> Info </a>
 				</div>
 				<div class="ui-block-b">
-					<a data-role="button" id="mapsHref" href="#mapsPage">Maps</a>
+					<a data-role="button" class="locationMaps" href="#mapsPage">Maps</a>
 				</div>
 				<div class="ui-block-c">
 					<a data-role="button" href="#search"> Search </a>

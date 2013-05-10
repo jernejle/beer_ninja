@@ -13,12 +13,14 @@ import javax.ws.rs.core.MediaType;
 import com.rateabeer.pojo.Beer;
 import com.rateabeer.pojo.User;
 import com.ratebeer.dao.BeerDao;
+import com.ratebeer.dao.LocationDao;
 import com.ratebeer.dao.UserDao;
 
 @Path("/beer")
 public class BeerService {
 
 	BeerDao bdao = new BeerDao();
+	LocationDao ldao = new LocationDao();
 	
 	@GET
 	@Path("/{id}")
@@ -46,6 +48,15 @@ public class BeerService {
 		int num = 15;
 		List<Beer> beers = bdao.getLast(num);
 		if (beers == null) beers = new ArrayList<Beer>();
+		return beers;
+	}
+	
+	@GET
+	@Path("/location/{id}")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Beer> getBeersOnLocation(@PathParam("id") int locationId) {
+		String locationName = ldao.getLocation(locationId).getName();
+		List<Beer> beers = bdao.getBeersByLocation(locationName);
 		return beers;
 	}
 	

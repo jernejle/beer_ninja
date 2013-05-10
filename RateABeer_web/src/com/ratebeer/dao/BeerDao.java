@@ -94,6 +94,21 @@ public class BeerDao {
 		}
 		return beers;
 	}
+	
+	public List<Beer> getBeersByLocation(String locationName) {
+		em = DB.getDBFactory().createEntityManager();
+		List<Beer> beers = null;
+		try {
+			Query q = em.createQuery("SELECT b FROM Beer b INNER JOIN b.locations l WHERE l.name LIKE :param ORDER BY l.id DESC");
+			q.setParameter("param", "%" + locationName.toUpperCase() + "%");
+			beers = (List<Beer>)q.getResultList();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			em.close();
+		}
+		return beers;
+	}
 
 	@PreDestroy
 	public void destruct() {

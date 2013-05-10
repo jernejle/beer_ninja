@@ -1,16 +1,8 @@
 $(function() {
 	var beerLocations = null;
-
 	$(document).bind("mobileinit", function() {
 		// Make your jQuery Mobile framework configuration changes here!
 		$.mobile.allowCrossDomainPages = true;
-	});
-
-	$("#recentBeersLink").click(function() {
-		$.fn.setButtonTheme($(this), true);
-		$.fn.setButtonTheme($("#locationsHref"), false);
-		$.fn.setButtonTheme($("#beersHref"), false);
-		$.fn.getRecentBeers();
 	});
 
 	$.fn.getRecentBeers = function() {
@@ -27,43 +19,6 @@ $(function() {
 				alert(xhr.responseText);
 			}
 		});
-	};
-
-	$.fn.addCommentBind = function() {
-		$("#sendCommentHref").unbind().click(
-				function() {
-					var val = $("#commentInput").val();
-					if (val.length < 5) {
-						$("#dialogText").html("Content is not long enough!");
-						$("#dialogLink").trigger('click');
-						return;
-					}
-					$(this).unbind();
-					var comObj = new Object();
-					var dateObj = new Date();
-					var dateStr = dateObj.getFullYear() + "-"
-							+ parseInt(dateObj.getMonth() + 1) + "-"
-							+ dateObj.getDate() + " " + dateObj.getHours()
-							+ ":" + dateObj.getMinutes() + ":"
-							+ dateObj.getSeconds();
-					comObj.author = new Object();
-					comObj.author.username = "testni";
-					comObj.author.id = "1";
-					comObj.comment = val;
-					comObj.date = dateStr;
-					var jsonObj = JSON.stringify(comObj);
-					var div = $.fn.returnCommentDiv(comObj);
-					$(".allcomments").prepend(div);
-					$.ajax({
-						type : "POST",
-						contentType : "application/json",
-						url : restUrl + "comment/newcomment/" + chosenBeer,
-						processData : false,
-						data : jsonObj
-					}).done(function() {
-						$(".allcomments").prepend(div);
-					});
-				});
 	};
 
 	$("#resetHref").click(function() {
@@ -88,11 +43,8 @@ $(function() {
 		});
 	});
 
-	$("#beersHref").click(function() {
-		$.fn.setButtonTheme($(this), true);
-		$.fn.setButtonTheme($("#locationsHref"), false);
-		$.fn.setButtonTheme($("#recentBeersLink"), false);
-
+	// event listener for search buttons
+	$.fn.bindSearch = function(url, parseBeers) {
 		var work = false;
 		$(".search-input").click(function() {
 			$(this).val('');
@@ -104,13 +56,13 @@ $(function() {
 				setTimeout(function() {
 					$.ajax({
 						type : "GET",
-						url : restUrl + "beer/search/",
+						url : restUrl + url,
 						dataType : "json",
 						data : {
 							param : val
 						},
 						success : function(data) {
-							$.fn.parseBeers(data, $(".recent_beers"));
+							parseBeers(data, $(".recent_beers"));
 							work = false;
 						},
 						error : function(xhr, textStatus, errorThrown) {
@@ -121,13 +73,7 @@ $(function() {
 				}, 1000);
 			}
 		});
-	});
-
-	$("#locationsHref").click(function() {
-		$.fn.setButtonTheme($(this), true);
-		$.fn.setButtonTheme($("#beersHref"), false);
-		$.fn.setButtonTheme($("#recentBeersLink"), false);
-	});
+	};
 
 	$.fn.setButtonTheme = function(link, active) {
 		var newTheme = (active ? "b" : "c");
@@ -155,6 +101,54 @@ $(function() {
 		});
 	};
 
+	// click on desired location
+	$.fn.bindChoseLocation = function() {
+		$(".choseLocation").click(function() {
+			chosenLocation = $(this).attr("id");
+
+			// get beers on location
+			$.ajax({
+				type : "GET",
+				url : restUrl + "location/beers/" + chosenLocation,
+				dataType : "json",
+				success : function(data) {
+					$.fn.parseBeersOnSpecificLocations(data);
+				},
+				error : function(xhr, textStatus, errorThrown) {
+					alert("Napaka: " + xhr + " " + xhr.status);
+					alert(xhr.responseText);
+				}
+			});
+
+		});
+	};
+
+	// parse locations (beers on location)
+	$.fn.parseBeersOnSpecificLocations = function(data) {
+		$(".beersOnLocation").empty();
+		if (data == null)
+			return;
+
+		var jsonData = (data.location instanceof Array ? data.location : data);
+
+		beerLocations = new Array();
+		$.each(jsonData, function(i, item) {
+			$("<div></div>").addClass("location " + item.lat + ";" + item.lon)
+					.html(
+							"<img src='img/web/beer-icon.png' /><div class='location-text'>"
+									+ item.beer.name + " (Checked in by "
+									+ item.user.username + ")</div>").appendTo(
+							$(".beersOnLocation"));
+			if (beerLocations.length == 0) {
+				mapLocation = new Object();
+				mapLocation.lat = item.lat;
+				mapLocation.lon = item.lon;
+				beerLocations.push(mapLocation);
+			}
+		});
+	};
+
+	// get beer by id
 	$.fn.getBeer = function(beerId) {
 		$.ajax({
 			type : "GET",
@@ -171,6 +165,7 @@ $(function() {
 		});
 	};
 
+	// set click listener on "load more comments"
 	$.fn.bindLoadMore = function() {
 		$(".loadmore").click(function() {
 			$.fn.getComments(chosenBeer);
@@ -267,6 +262,28 @@ $(function() {
 		$.fn.bindChoseBeer();
 	};
 
+	// parse searched locations
+	$.fn.parseLocations = function(data, div) {
+		div.empty();
+		var jsonObj = null;
+		if (data == null)
+			return;
+		jsonObj = (data.location instanceof Array ? data.location : data);
+
+		$.each(jsonObj,
+				function(i, item) {
+					$("<div style='text-align: center'></div>").addClass(
+							"ui-block-a").html(
+							"<img src='img/web/google-maps-icon.png' />")
+							.appendTo(div);
+					$("<div></div>").addClass("ui-block-b people_name").html(
+							"<a href='#beersOnLocations' class='choseLocation' id="
+									+ item.id + ">" + item.name + "</a>")
+							.appendTo(div);
+				});
+		$.fn.bindChoseLocation();
+	};
+
 	$.fn.parseBeerLocations = function(data) {
 		$(".allLocations").empty();
 		if (data == null)
@@ -286,9 +303,32 @@ $(function() {
 			mapLocation = new Object();
 			mapLocation.lat = item.lat;
 			mapLocation.lon = item.lon;
-			mapLocation.user = item.user.username;
+			mapLocation.info = item.user.username;
 			beerLocations.push(mapLocation);
 		});
+	};
+
+	// google maps + set markers
+	$.fn.setMaps = function() {
+		setTimeout(function() {
+			$('#map_canvas').gmap().bind('init', function(ev, map) {
+				if (beerLocations != null) {
+					for ( var i = 0; i < beerLocations.length; i++) {
+						locObj = beerLocations[i];
+
+						$('#map_canvas').gmap('addMarker', {
+							'position' : locObj.lat + "," + locObj.lon,
+							'bounds' : true
+						}).click(function() {
+							$('#map_canvas').gmap('openInfoWindow', {
+								'content' : locObj.info
+							}, this);
+						});
+					}
+					beerLocations = null;
+				}
+			});
+		}, 200);
 	};
 
 	$("#mapsPage").on("pageshow", function(event, ui) {
@@ -311,7 +351,72 @@ $(function() {
 			});
 		}, 200);
 	});
+	
+	$(".locationMaps").click(function() {
+		$('#map_canvas').gmap('destroy');
+	});
 
+	// add new comment
+	$.fn.addCommentBind = function() {
+		$("#sendCommentHref").unbind().click(
+				function() {
+					var val = $("#commentInput").val();
+					if (val.length < 5) {
+						$("#dialogText").html("Content is not long enough!");
+						$("#dialogLink").trigger('click');
+						return;
+					}
+					$(this).unbind();
+					var comObj = new Object();
+					var dateObj = new Date();
+					var dateStr = dateObj.getFullYear() + "-"
+							+ parseInt(dateObj.getMonth() + 1) + "-"
+							+ dateObj.getDate() + " " + dateObj.getHours()
+							+ ":" + dateObj.getMinutes() + ":"
+							+ dateObj.getSeconds();
+					comObj.author = new Object();
+					comObj.author.username = "testni";
+					comObj.author.id = "1";
+					comObj.comment = val;
+					comObj.date = dateStr;
+					var jsonObj = JSON.stringify(comObj);
+					var div = $.fn.returnCommentDiv(comObj);
+					$(".allcomments").prepend(div);
+					$.ajax({
+						type : "POST",
+						contentType : "application/json",
+						url : restUrl + "comment/newcomment/" + chosenBeer,
+						processData : false,
+						data : jsonObj
+					}).done(function() {
+						$(".allcomments").prepend(div);
+					});
+				});
+	};
+
+	// change search buttons style
+	$("#beersHref").click(function() {
+		$.fn.setButtonTheme($(this), true);
+		$.fn.setButtonTheme($("#locationsHref"), false);
+		$.fn.setButtonTheme($("#recentBeersLink"), false);
+		$(".search-input").unbind();
+		$.fn.bindSearch("beer/search", $.fn.parseBeers);
+	});
+	$("#locationsHref").click(function() {
+		$.fn.setButtonTheme($(this), true);
+		$.fn.setButtonTheme($("#beersHref"), false);
+		$.fn.setButtonTheme($("#recentBeersLink"), false);
+		$(".search-input").unbind();
+		$.fn.bindSearch("location/search/?limit=1", $.fn.parseLocations);
+	});
+	$("#recentBeersLink").click(function() {
+		$.fn.setButtonTheme($(this), true);
+		$.fn.setButtonTheme($("#locationsHref"), false);
+		$.fn.setButtonTheme($("#beersHref"), false);
+		$.fn.getRecentBeers();
+	});
+
+	// print rating stars
 	$.fn.setRating = function(div, rating) {
 		div.empty();
 		for ( var i = 0; i < rating; i++) {
