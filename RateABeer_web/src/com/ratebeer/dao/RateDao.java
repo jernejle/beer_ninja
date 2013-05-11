@@ -67,6 +67,20 @@ public class RateDao {
 		}
 		return rates;
 	}
+	
+	public List<Rate> getBeerRatingForCategory(int beerId, int type) {
+		em = DB.getDBFactory().createEntityManager();
+		List<Rate> rates = null;
+		try {
+			Query q = em.createQuery("SELECT r FROM Rate r WHERE r.beer.id = " + beerId + " AND r.type = " + type);
+			rates = (List<Rate>) q.getResultList();
+		} catch (Exception e) {
+			System.out.println("no objects " + beerId + " ");
+		} finally {
+			em.close();
+		}
+		return rates;
+	}
 
 
 	public void updateRate(Rate rate) {

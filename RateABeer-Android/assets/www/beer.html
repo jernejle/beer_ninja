@@ -61,7 +61,10 @@
 				</div>
 			</div>
 
-			<div class="ui-grid-b my-breakpoint recent_beers"></div>
+			<div class="recent_beers">
+				<ul class="recent_beers_ul" data-role="listview">
+				</ul>
+			</div>
 
 		</div>
 	</div>
@@ -164,7 +167,8 @@
 						Locations </a>
 				</div>
 				<div class="ui-block-b">
-					<a data-role="button" id="commentshref" href="#comments"> -- </a>
+					<a data-role="button" href="#ratingDialog" data-rel="dialog"
+						data-transition="pop"> Rate beer </a>
 				</div>
 				<div class="ui-block-c">
 					<a data-role="button" href="#search"> -- </a>
@@ -274,12 +278,28 @@
 		</div>
 	</div>
 
-	<!-- Dialog  -->
+	<!-- Message dialog  -->
 	<div data-role="page" id="dialog">
 		<div data-role="header">
 			<h1 id="dialogtitle">Message</h1>
 		</div>
 		<div data-role="content" id="dialogText"></div>
+	</div>
+
+	<!-- Rating mobile -->
+	<div data-role="page" id="ratingDialog">
+		<div data-role="header">
+			<h1 id="dialogtitle">Rate this beer</h1>
+		</div>
+		<div data-role="content">
+			<label for="slider-1">Aroma</label> <input type="range"
+				name="aroma-s" id="slider-1" value="1" min="1" max="5" /> <label
+				for="slider-2">Flavour</label> <input type="range"
+				name="slider-flavour" id="slider-2" value="1" min="1" max="5" />
+			<label for="slider-3">Alcohol Content</label> <input type="range"
+				name="slider-alcohol" id="slider-3" value="1" min="1" max="5" />
+			<a data-role="button" id="sendRating">Send rating</a>
+		</div>
 	</div>
 
 	<!-- Locations -->

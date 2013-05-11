@@ -5,26 +5,11 @@ $(function() {
 		$.mobile.allowCrossDomainPages = true;
 	});
 
-	$.fn.getRecentBeers = function() {
-		$.ajax({
-			type : "GET",
-			url : restUrl + "beer/last",
-			dataType : "json",
-			processData : false,
-			success : function(data) {
-				$.fn.parseBeers(data, $(".recent_beers"));
-			},
-			error : function(xhr, textStatus, errorThrown) {
-				alert("Napaka: " + xhr + " " + xhr.status);
-				alert(xhr.responseText);
-			}
-		});
-	};
-
 	$("#resetHref").click(function() {
 		$("#commentInput").val('');
 	});
 
+	// get locations of a given beer
 	$("#beerLocations").click(function() {
 		beerLocations = null;
 		$('#map_canvas').gmap('destroy');
@@ -41,6 +26,34 @@ $(function() {
 				alert(xhr.responseText);
 			}
 		});
+	});
+
+	// 1-aroma, 2-flavour, 3-alcohol
+	$("#sendRating").click(function() {
+		var rateJson = new Object();
+		rateJson.rate = new Array();
+		var rateObj, value;
+		for ( var i = 1; i <= 3; i++) {
+			value = $("#slider-" + i).val();
+			rateObj = new Object();
+			rateObj.user = new Object();
+			rateObj.beer = new Object();
+			rateObj.user.id = 1;
+			rateObj.beer.id = chosenBeer;
+			rateObj.type = i;
+			rateObj.ocena = value;
+			rateJson.rate.push(rateObj);
+		}
+
+		var data = JSON.stringify(rateJson);
+		$.ajax({
+			type : "POST",
+			contentType : "application/json",
+			url : restUrl + "rate/new",
+			processData : false,
+			data : data
+		});
+		$("#ratingDialog").dialog("close");
 	});
 
 	// event listener for search buttons
@@ -62,7 +75,7 @@ $(function() {
 							param : val
 						},
 						success : function(data) {
-							parseBeers(data, $(".recent_beers"));
+							parseBeers(data, $(".recent_beers_ul"));
 							work = false;
 						},
 						error : function(xhr, textStatus, errorThrown) {
@@ -75,15 +88,7 @@ $(function() {
 		});
 	};
 
-	$.fn.setButtonTheme = function(link, active) {
-		var newTheme = (active ? "b" : "c");
-
-		link.removeClass().addClass(
-				"ui-btn ui-shadow ui-btn-corner-all ui-btn-hover-" + newTheme
-						+ " ui-btn-up-" + newTheme + " ui-btn-up-" + newTheme);
-		link.attr("data-theme", newTheme).trigger("mouseout");
-	};
-
+	// click listener when user chooses one beer
 	$.fn.bindChoseBeer = function() {
 		$(".choseBeer").click(function() {
 			chosenBeer = $(this).attr("id");
@@ -105,7 +110,6 @@ $(function() {
 	$.fn.bindChoseLocation = function() {
 		$(".choseLocation").click(function() {
 			chosenLocation = $(this).attr("id");
-
 			// get beers on location
 			$.ajax({
 				type : "GET",
@@ -172,6 +176,7 @@ $(function() {
 		});
 	};
 
+	// click on comments link
 	$("#commentshref").click(function() {
 		$.fn.addCommentBind();
 		$("#commentInput").val('');
@@ -229,6 +234,7 @@ $(function() {
 								+ item.comment + "</div>");
 	};
 
+	// parse beer
 	$.fn.parseBeerJson = function(jsonData) {
 		beerData = jsonData;
 		$(".title").text(beerData.name);
@@ -252,13 +258,15 @@ $(function() {
 		jsonObj = (data.beer instanceof Array ? data.beer : data);
 
 		$.each(jsonObj, function(i, item) {
-			$("<div style='text-align: center'></div>").addClass("ui-block-a")
-					.html("<img src='img/web/beer_pic_small.png' />").appendTo(
-							div);
-			$("<div></div>").addClass("ui-block-b people_name").html(
-					"<a href='#beer' class='choseBeer' id=" + item.id + ">"
-							+ item.name + "</a>").appendTo(div);
+			$(div).append($('<li/>').append($('<a/>', {
+				'href' : '#beer',
+				'class' : 'choseBeer',
+				'id' : item.id,
+				'data-transition' : 'slide',
+				'text' : item.name
+			})));
 		});
+		$(".recent_beers_ul").listview('refresh');
 		$.fn.bindChoseBeer();
 	};
 
@@ -270,17 +278,16 @@ $(function() {
 			return;
 		jsonObj = (data.location instanceof Array ? data.location : data);
 
-		$.each(jsonObj,
-				function(i, item) {
-					$("<div style='text-align: center'></div>").addClass(
-							"ui-block-a").html(
-							"<img src='img/web/google-maps-icon.png' />")
-							.appendTo(div);
-					$("<div></div>").addClass("ui-block-b people_name").html(
-							"<a href='#beersOnLocations' class='choseLocation' id="
-									+ item.id + ">" + item.name + "</a>")
-							.appendTo(div);
-				});
+		$.each(jsonObj, function(i, item) {
+			$(div).append($('<li/>').append($('<a/>', {
+				'href' : '#beersOnLocations',
+				'class' : 'choseLocation',
+				'id' : item.id,
+				'data-transition' : 'slide',
+				'text' : item.name
+			})));
+		});
+		$(".recent_beers_ul").listview('refresh');
 		$.fn.bindChoseLocation();
 	};
 
@@ -351,7 +358,7 @@ $(function() {
 			});
 		}, 200);
 	});
-	
+
 	$(".locationMaps").click(function() {
 		$('#map_canvas').gmap('destroy');
 	});
@@ -420,11 +427,38 @@ $(function() {
 	$.fn.setRating = function(div, rating) {
 		div.empty();
 		for ( var i = 0; i < rating; i++) {
-			div.append("<img src='img/web/star_blank.png' />");
+			div.append("<img class='star' src='img/web/star_blank.png' />");
 		}
 		for ( var j = 0; j < 5 - rating; j++) {
-			div.append("<img src='img/web/star.png' />");
+			div.append("<img class='star' src='img/web/star.png' />");
 		}
+	};
+
+	// get recent beers on search page
+	$.fn.getRecentBeers = function() {
+		$.ajax({
+			type : "GET",
+			url : restUrl + "beer/last",
+			dataType : "json",
+			processData : false,
+			success : function(data) {
+				$.fn.parseBeers(data, $(".recent_beers_ul"));
+			},
+			error : function(xhr, textStatus, errorThrown) {
+				alert("Napaka: " + xhr + " " + xhr.status);
+				alert(xhr.responseText);
+			}
+		});
+	};
+
+	// change button theme on search page
+	$.fn.setButtonTheme = function(link, active) {
+		var newTheme = (active ? "b" : "c");
+
+		link.removeClass().addClass(
+				"ui-btn ui-shadow ui-btn-corner-all ui-btn-hover-" + newTheme
+						+ " ui-btn-up-" + newTheme + " ui-btn-up-" + newTheme);
+		link.attr("data-theme", newTheme).trigger("mouseout");
 	};
 
 });

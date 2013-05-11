@@ -1,7 +1,11 @@
 package com.rateabeer.pojo;
 
 import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -30,7 +34,7 @@ public class Beer {
 	private Date added;
 	@NotNull
 	private String pic;
-	
+
 	private int rateAroma; // type1
 	private int rateAlcoholContent; // type2
 	private int rateFlavour; // type3
@@ -147,6 +151,23 @@ public class Beer {
 
 	public void setRateFlavour(int rateFlavour) {
 		this.rateFlavour = rateFlavour;
+	}
+
+	public void updateBeerRatings(ArrayList<Rate[]> ratings) {
+		this.rateAroma = this.calculateRating(Arrays.asList(ratings.get(0)));
+		this.rateFlavour = this.calculateRating(Arrays.asList(ratings.get(1)));
+		this.rateAlcoholContent = this.calculateRating(Arrays.asList(ratings
+				.get(2)));
+	}
+
+	private int calculateRating(List<Rate> rates) {
+		int sum = 0;
+		if (rates == null)
+			return sum;
+		for (Rate r : rates) {
+			sum += r.getOcena();
+		}
+		return Math.round(sum / rates.size());
 	}
 
 }

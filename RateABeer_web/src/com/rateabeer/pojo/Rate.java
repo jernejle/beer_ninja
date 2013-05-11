@@ -16,7 +16,7 @@ public class Rate {
 	@GeneratedValue(strategy=GenerationType.TABLE)
 	private int id;
 	@NotNull
-	private int type;
+	private int type; // 1 - aroma, 2 - flavour, 3 - alcohol content
 	@NotNull
 	private int rate;
 	

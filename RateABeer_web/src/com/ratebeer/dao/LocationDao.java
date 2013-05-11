@@ -98,7 +98,7 @@ public class LocationDao {
 		em = DB.getDBFactory().createEntityManager();
 		List<Location> locations = null;
 		try {
-			Query q = em.createQuery("SELECT l FROM Location l INNER JOIN FETCH l.beer WHERE l.name = :name", Location.class);
+			Query q = em.createQuery("SELECT l FROM Location l WHERE l.name = :name", Location.class);
 			q.setParameter("name",param);
 			locations = (List<Location>)q.getResultList();
 		} catch (Exception e) {
