@@ -48,11 +48,13 @@ function loginUser() {
 				console.log('Klic uspesen.');
 				console.log('ID: ' + data.id);
 				console.log('Name: ' + data.name);
+
 			  },
 			  error       : function(xhr, textStatus, errorThrown){ 
 				  console.log(textStatus);
 				  console.log(xhr);
 				  alert("Napaka: " + xhr + " " + xhr.status);
+				  alert(JSON.stringify(xhr));
 				  alert(xhr.responseText);
 			  } 
 		});

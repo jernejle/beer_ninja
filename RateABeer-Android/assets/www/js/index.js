@@ -53,6 +53,11 @@
 //};
 
 function onDeviceReady() {	
+	
+	// Stanje omrezja
+//	var networkState = navigator.connection.type;	
+//	console.log("Network state: " + networkState);
+	
 	db = new DBStorage();
     db.setup();				    
     db.getEntries(function(results) {
@@ -60,14 +65,12 @@ function onDeviceReady() {
     	if (results.length > 0) {
     		
     		var logoutButton = "<a href='#' data-role='button' data-mini='true' id='logoutButton'>Odjava</a>";
-    		
-    		//alert("Hello, " + results[0].username);
 
     		$('#footerContent').html("Prijavljeni ste kot " + results[0].username);
     		$('#userStatusButton').html('<a id="logoutButton" href="#" data-role="button" data-mini="true" data-corners="true" data-shadow="true" data-iconshadow="true" data-wrapperels="span" data-theme="a" class="ui-btn ui-shadow ui-btn-corner-all ui-mini ui-btn-hover-a ui-btn-up-a"><span class="ui-btn-inner"><span class="ui-btn-text">Odjava</span></span></a>');
     	
     		// Uporabnika se shrani v sejo
-    		sessionStorage.userId = results[0].username.id;
+    		window.sessionStorage.setItem("userId", results[0].id + "");
 
     		$('#logoutButton').click(function() {
     			db.deleteEntry({id:results[0].id}, function() {

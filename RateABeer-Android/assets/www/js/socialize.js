@@ -1,3 +1,5 @@
+var dogodek = {pos : 'testing position'};
+
 function initNativeDatePicker() {
 	$('.nativedatepicker').focus(function(event) {
 
@@ -44,25 +46,24 @@ function initNativeDatePicker() {
 	});
 };
 
-$(document).ready(function() {
+function onDeviceReady() {	
+	
+	$('#flipCurrentLocation').bind("change", function() {
+		var sliderLocationVal = $('#flipCurrentLocation').val();
 
-	initNativeDatePicker();
-	
-	$('#flipCurrentLocation').change(function() {
-		var sliderDateVal = $('#flipCurrentLocation').val();
-	
-		if (sliderDateVal == 'yes') {
+		if (sliderLocationVal == 'yes') {
 			$('#location').prop('disabled', true);
 			$('#location').css({
 				'background-color' : 'grey',
 			});
+
+			navigator.geolocation.getCurrentPosition(onSuccess, onError, { enableHighAccuracy: true });
 		} else {
 			$('#location').prop('disabled', false);
 			$('#location').css({
 				'background-color' : 'white',
 			});
 		}
-	
 	});
 	
 	$('#createEventButton').click(function() {
@@ -71,9 +72,33 @@ $(document).ready(function() {
 		
 		var userId = sessionStorage.userId;
 		
-		console.log('Trenutno prijavljen uporabnik: ' + sessionStorage.userId);
+		console.log('Trenutno prijavljen uporabnik: ' + window.sessionStorage.getItem("userId"));
+		
+		console.log('Pozicija: ' + JSON.stringify(dogodek.pos));
 		
 		console.log("SOCIALIZE - KONEC");
 	});
+}
+
+function onSuccess(position) {
+    // Shranimo pozicijo
+    dogodek.pos = {long : position.coords.longitude, lat : position.coords.latitude};
+    
+    console.log("Pridobljena pozicija: " + JSON.stringify(dogodek.pos));
+}
+
+function onError(error) {
+	var errorMessage = 'code: '    + error.code    + '\n' +
+    					'message: ' + error.message + '\n';
+	
+    console.log(errorMessage);
+	alert(errorMessage);
+}
+
+$(document).ready(function() {
+
+	initNativeDatePicker();
+
+	document.addEventListener("deviceready", onDeviceReady, false);
 
 });
