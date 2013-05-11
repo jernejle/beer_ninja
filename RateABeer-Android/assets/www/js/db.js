@@ -5,7 +5,7 @@ DBStorage.prototype.setup = function(callback) {
 
 	this.db = window.openDatabase("rate_a_beer", 1, "rate_a_beer", 1000000);
 	this.db.transaction(this.initDB, this.dbErrorHandler, this.dbSuccessHandler);
-	
+
 	// Sample data
 //	var data = {
 //			username : 'u2',
@@ -63,6 +63,9 @@ DBStorage.prototype.getEntry = function(id, callback) {
 }
  
 DBStorage.prototype.saveEntry = function(data, callback) {
+	if (callback == null) {
+		callback = this.dbSuccessHandler;
+	}
 console.dir(data);
 	this.db.transaction(
 		function(t) {
