@@ -10,7 +10,7 @@ import com.ratebeer.db.DB;
 public class UserDao {
 
 	private EntityManager em;
-
+	
 	public User addUser(User user) {
 		em = DB.getDBFactory().createEntityManager();
 
