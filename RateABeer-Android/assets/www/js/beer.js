@@ -1,11 +1,122 @@
 $(function() {
-	var beerLocations = null;
+	var beerLocations, chosenLocationName, chosenLocationLat, chosenLocationLon;
+	chosenLocationName = null;
+	chosenLocationLat = null;
+	chosenLocationLon = null;
+
 	$(document).bind("mobileinit", function() {
 		// Make your jQuery Mobile framework configuration changes here!
 		$.mobile.allowCrossDomainPages = true;
 	});
 
-	$("#resetHref").click(function() {
+	var delay = (function() {
+		var timer = 0;
+		return function(callback, ms) {
+			clearTimeout(timer);
+			timer = setTimeout(callback, ms);
+		};
+	})();
+
+	$("#sendLocationHref")
+			.click(
+					function() {
+						$("#locationDialogContent").empty();
+						var divMess = null;
+						if (chosenLocationName == null
+								&& chosenLocationLat != null
+								&& chosenLocationLon != null) {
+							divMess = "Your location coordinates:<br /> Latitude "
+									+ chosenLocationLat
+									+ "<br />Longitude"
+									+ chosenLocationLon;
+							$.fn.setSendToServerButtonClick();
+						} else if (chosenLocationLat != null
+								&& chosenLocationLon != null
+								&& chosenLocationName != null) {
+							divMess = "Your location <br /> "
+									+ chosenLocationName;
+							$.fn.setSendToServerButtonClick();
+						} else {
+							divMess = "Turn on location detector first or choose your location!";
+						}
+						$("#locationDialogContent").append(divMess);
+
+					});
+
+	$.fn.setSendToServerButtonClick = function() {
+		$("#sendLocationToServerButton").unbind().click(function() {
+			if (chosenLocationLat == null || chosenLocationLon == null)
+				return;
+			var tmpLoc = new Object();
+			tmpLoc.beer = new Object();
+			tmpLoc.beer.id = chosenBeer;
+			tmpLoc.lat = chosenLocationLat;
+			tmpLoc.lon = chosenLocationLon;
+			tmpLoc.name = chosenLocationName;
+			tmpLoc.user = new Object();
+			tmpLoc.user.id = 1;
+
+			var data = JSON.stringify(tmpLoc);
+			$.ajax({
+				type : "POST",
+				contentType : "application/json",
+				url : restUrl + "location/new",
+				processData : false,
+				data : data
+			});
+			$("#locationDialog").dialog('close');
+		});
+	};
+
+	$.fn.bindFlipLocation = function() {
+		$("#flip-location").on("change", function() {
+			$("#userLocationInfo").hide();
+			var val = $(this).val();
+			if (val == "yes") {
+				$("#searchPlaces").hide();
+				$("#showPlaces").empty();
+				navigator.geolocation.getCurrentPosition(onSuccess, onError);
+			} else {
+				$("#searchPlaces").show();
+			}
+
+		});
+	};
+
+	$.fn.searchPlacesBind = function() {
+		$(".search-places").keyup(function() {
+			delay(function() {
+				var val = $(".search-places").val();
+				if (val.length < 4)
+					return;
+				val = val.replace(/ /g, "+");
+
+				$.ajax({
+					type : "GET",
+					url : restUrl + "location/search/locations",
+					dataType : "json",
+					data : {
+						param : val
+					},
+					success : function(data) {
+						$.fn.parsePlaces(data);
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						alert("Napaka: " + xhr + " " + xhr.status);
+						alert(xhr.responseText);
+					}
+				});
+			}, 1000);
+
+		});
+	};
+
+	$("#searchPlacesHref").unbind().click(function() {
+		$.fn.bindFlipLocation();
+		$.fn.searchPlacesBind();
+	});
+
+	$("#resetHref").unbind().click(function() {
 		$("#commentInput").val('');
 	});
 
@@ -316,27 +427,17 @@ $(function() {
 	};
 
 	// google maps + set markers
-	$.fn.setMaps = function() {
-		setTimeout(function() {
-			$('#map_canvas').gmap().bind('init', function(ev, map) {
-				if (beerLocations != null) {
-					for ( var i = 0; i < beerLocations.length; i++) {
-						locObj = beerLocations[i];
-
-						$('#map_canvas').gmap('addMarker', {
-							'position' : locObj.lat + "," + locObj.lon,
-							'bounds' : true
-						}).click(function() {
-							$('#map_canvas').gmap('openInfoWindow', {
-								'content' : locObj.info
-							}, this);
-						});
-					}
-					beerLocations = null;
-				}
-			});
-		}, 200);
-	};
+	/*
+	 * $.fn.setMaps = function() { setTimeout(function() {
+	 * $('#map_canvas').gmap().bind('init', function(ev, map) { if
+	 * (beerLocations != null) { for ( var i = 0; i < beerLocations.length; i++) {
+	 * locObj = beerLocations[i];
+	 * 
+	 * $('#map_canvas').gmap('addMarker', { 'position' : locObj.lat + "," +
+	 * locObj.lon, 'bounds' : true }).click(function() {
+	 * $('#map_canvas').gmap('openInfoWindow', { 'content' : locObj.info },
+	 * this); }); } beerLocations = null; } }); }, 200); };
+	 */
 
 	$("#mapsPage").on("pageshow", function(event, ui) {
 		setTimeout(function() {
@@ -414,7 +515,7 @@ $(function() {
 		$.fn.setButtonTheme($("#beersHref"), false);
 		$.fn.setButtonTheme($("#recentBeersLink"), false);
 		$(".search-input").unbind();
-		$.fn.bindSearch("location/search/?limit=1", $.fn.parseLocations);
+		$.fn.bindSearch("location/search/", $.fn.parseLocations);
 	});
 	$("#recentBeersLink").click(function() {
 		$.fn.setButtonTheme($(this), true);
@@ -460,5 +561,82 @@ $(function() {
 						+ " ui-btn-up-" + newTheme + " ui-btn-up-" + newTheme);
 		link.attr("data-theme", newTheme).trigger("mouseout");
 	};
+
+	$.fn.parsePlaces = function(data) {
+		$("#showPlaces").empty();
+		if (data == null)
+			return;
+
+		var jsonData = (data.location instanceof Array ? data.location : data);
+
+		$
+				.each(
+						jsonData,
+						function(i, item) {
+							var divPlace = $("<div></div>").html(item.name)
+									.addClass(
+											"locationPlace " + item.lat + ";"
+													+ item.lon);
+							divPlace
+									.append("<img class='map-icon-location' src='img/web/google-maps-icon.png' />");
+							divPlace.appendTo($("#showPlaces"));
+						});
+		$(".locationPlace").click(
+				function() {
+					var name = $(this).text();
+					$("#showPlaces .map-pin").remove();
+
+					if (name != chosenLocationName) {
+						$(this).append("<img class='map-pin' src='img/web/map_pin.png' />");	
+						var tmpLocation = $.fn.getCoordinatesFromDiv($(this));
+						chosenLocationName = tmpLocation.user;
+						chosenLocationLat = tmpLocation.lat;
+						chosenLocationLon = tmpLocation.lon;
+					} else {
+						chosenLocationName = null;
+						chosenLocationLat = null;
+						chosenLocationLon = null;
+					}
+
+				});
+
+		$(".map-icon-location").click(function() {
+			$('#map_canvas').gmap('destroy');
+			var parentDiv = $(this).parent("div");
+			var mapLocObj = $.fn.getCoordinatesFromDiv(parentDiv);
+
+			setTimeout(function() {
+				beerLocations = new Array();
+				beerLocations.push(mapLocObj);
+				$.mobile.changePage("#mapsPage");
+			}, 2000);
+		});
+	};
+
+	$.fn.getCoordinatesFromDiv = function(div) {
+		var coordinates = div.attr("class").split(" ")[1].split(";");
+		mapLocation = new Object();
+		mapLocation.lat = coordinates[0];
+		mapLocation.lon = coordinates[1];
+		mapLocation.user = div.text();
+		return mapLocation;
+	};
+
+	var onSuccess = function(position) {
+
+		$("#userLocationInfo").html("Your location was successfully obtained");
+		$("#userLocationInfo").show();
+
+		chosenLocationLat = position.coords.latitude;
+		chosenLocationLon = position.coords.longitude;
+		chosenLocationName = null;
+	};
+
+	function onError(error) {
+		$("#userLocationInfo").html(
+				"Couldn't get your location! <br />" + error.code + " "
+						+ error.message);
+		$("#userLocationInfo").show();
+	}
 
 });

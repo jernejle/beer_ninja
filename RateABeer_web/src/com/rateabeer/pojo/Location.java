@@ -1,5 +1,9 @@
 package com.rateabeer.pojo;
 
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,12 +12,20 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotNull;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+import com.rateabeer.settings._Settings;
+import com.sun.jersey.api.client.Client;
+import com.sun.jersey.api.client.ClientResponse;
+import com.sun.jersey.api.client.WebResource;
+
 @Entity
 @XmlRootElement
 public class Location {
 
 	@Id
-	@GeneratedValue(strategy=GenerationType.TABLE)
+	@GeneratedValue(strategy = GenerationType.TABLE)
 	private int id;
 	@NotNull
 	private String name;
@@ -21,11 +33,11 @@ public class Location {
 	private String lat;
 	@NotNull
 	private String lon;
-	
+
 	@ManyToOne
 	@NotNull
 	private User user;
-	
+
 	@ManyToOne
 	@NotNull
 	private Beer beer;
@@ -77,5 +89,5 @@ public class Location {
 	public void setBeer(Beer beer) {
 		this.beer = beer;
 	}
-	
+
 }

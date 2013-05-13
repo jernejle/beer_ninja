@@ -210,3 +210,22 @@ form {
 	padding: 10px;
 	font-style: normal;
 }
+
+.locationPlace {
+	border: 1px solid rgb(139, 139, 139);
+	margin-top: 15px;
+	padding: 10px;
+	-webkit-border-radius: 10px;
+}
+
+.locationPlace img {
+	vertical-align: middle;
+	padding-left: 15px;
+}
+
+.map-icon-location {
+	width: 20px;
+	height: 20px;
+	display: inline-table;
+	float: right;
+}

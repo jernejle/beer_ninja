@@ -16,7 +16,7 @@
 <script type="text/javascript" src="cordova-2.6.0.js"></script>
 <script type="text/javascript" src="js/beer.js"></script>
 <script type="text/javascript"
-	src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDSxa1X6pQGZiC_d1Pz7-E7Nlv-acG4UjU&sensor=false"></script>
+	src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDSxa1X6pQGZiC_d1Pz7-E7Nlv-acG4UjU&sensor=false"></script>
 <script type="text/javascript" src="js/jquery.ui.map.js"></script>
 
 <script type="text/javascript" src="js/_settings.js"></script>
@@ -171,7 +171,8 @@
 						data-transition="pop"> Rate beer </a>
 				</div>
 				<div class="ui-block-c">
-					<a data-role="button" href="#search"> -- </a>
+					<a data-role="button" id="searchPlacesHref" href="#markLocationDiv">Mark
+						location of beer</a>
 				</div>
 			</div>
 		</div>
@@ -295,11 +296,21 @@
 			<label for="slider-1">Aroma</label> <input type="range"
 				name="aroma-s" id="slider-1" value="1" min="1" max="5" /> <label
 				for="slider-2">Flavour</label> <input type="range"
-				name="slider-flavour" id="slider-2" value="1" min="1" max="5" />
-			<label for="slider-3">Alcohol Content</label> <input type="range"
-				name="slider-alcohol" id="slider-3" value="1" min="1" max="5" />
-			<a data-role="button" id="sendRating">Send rating</a>
+				name="slider-flavour" id="slider-2" value="1" min="1" max="5" /> <label
+				for="slider-3">Alcohol Content</label> <input type="range"
+				name="slider-alcohol" id="slider-3" value="1" min="1" max="5" /> <a
+				data-role="button" id="sendRating">Send rating</a>
 		</div>
+	</div>
+
+	<!-- Location Dialog -->
+	<div data-role="page" id="locationDialog">
+		<div data-role="header">
+			<h1 id="dialogtitle">Your location</h1>
+		</div>
+		<div data-role="content" id="locationDialogContent"></div>
+		<a data-role="button" id="sendLocationToServerButton">Send my
+			location</a>
 	</div>
 
 	<!-- Locations -->
@@ -319,6 +330,47 @@
 				</div>
 				<div class="ui-block-b">
 					<a data-role="button" class="locationMaps" href="#mapsPage">Maps</a>
+				</div>
+				<div class="ui-block-c">
+					<a data-role="button" href="#search"> Search </a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Mark location -->
+
+	<div data-role="page" id="markLocationDiv">
+		<div data-theme="a" data-role="header">
+			<div style="text-align: center">
+				<img style="width: 320px; height: 38px" src="img/logo.png" />
+			</div>
+		</div>
+
+		<div data-role="content" class="content">
+
+			<label for="flip-1">Detect current location</label><br /> <select
+				name="flip-1" id="flip-location" data-role="slider">
+				<option value="no">No</option>
+				<option value="yes">Yes</option>
+			</select>
+
+			<div id="searchPlaces">
+				<input type="search" name="search-2" id="search-places"
+					class="search-places" value="" />
+			</div>
+
+			<div id="showPlaces"></div>
+
+			<div id="userLocationInfo" style="display: none"></div>
+
+			<div class="ui-grid-b my-breakpoint buttons">
+				<div class="ui-block-a">
+					<a data-role="button" href="#beer"> Info </a>
+				</div>
+				<div class="ui-block-b">
+					<a data-role="button" id="sendLocationHref" href="#locationDialog"
+						data-rel="dialog" data-transition="pop">Send location</a>
 				</div>
 				<div class="ui-block-c">
 					<a data-role="button" href="#search"> Search </a>
