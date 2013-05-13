@@ -65,16 +65,71 @@ function onDeviceReady() {
 			});
 		}
 	});
-	
+
 	$('#createEventButton').click(function() {
 		
 		console.log("SOCIALIZE - ZACETEK");
-		
-		var userId = sessionStorage.userId;
-		
+
 		console.log('Trenutno prijavljen uporabnik: ' + window.sessionStorage.getItem("userId"));
 		
 		console.log('Pozicija: ' + JSON.stringify(dogodek.pos));
+		
+		var des = $('eventDescription').val();
+		var isPublicEvent = ($('#flipPublicEvent').val() === 'yes') ? true : false;
+		
+		var data = JSON.stringify({
+			id : -1,
+			date : new Date(),
+			description : des,
+			lat :  dogodek.pos.lat,
+			lon :  dogodek.pos.lon,
+			publicEvent : isPublicEvent,
+			user : {id : window.sessionStorage.getItem("userId")},
+		});
+		
+		console.log("Poslani podatki: "  + data);
+		
+		$.ajax({
+			type : "POST",
+			contentType : "application/json",
+//			url : "http://192.168.1.2:8080/RateABeer_web/rest/user/login",
+			url : restUrl + "event/create/",
+			processData : false,
+			data : data,
+			success : function(data) { 
+
+				console.log('Klic uspesen.');
+				console.log(JSON.stringify(data));
+				
+				if (data.result === 'true') {
+					console.log("REZULTAT USPESNO");
+					navigator.notification.alert(
+						    'Dogodek je bil uspešno dodan.',  // message
+						    function() {window.location.replace('socialize.html');},         // callback
+						    'Dogodek dodan',            // title
+						    'Zapri'                  // buttonName
+						);
+				} else {
+					console.log("REZULTAT NEUSPESNO");
+				}	
+				
+				navigator.notification.alert(
+					    'You are the winner!',  // message
+					    alertDismissed,         // callback
+					    'Game Over',            // title
+					    'Done'                  // buttonName
+					);
+
+				
+			  },
+			  error       : function(xhr, textStatus, errorThrown){ 
+				  console.log(textStatus);
+				  console.log(JSON.stringify(xhr));
+				  alert("Napaka: " + xhr + " " + xhr.status);
+				  alert(JSON.stringify(xhr));
+				  alert(xhr.responseText);
+			  } 
+		});
 		
 		console.log("SOCIALIZE - KONEC");
 	});
@@ -82,7 +137,7 @@ function onDeviceReady() {
 
 function onSuccess(position) {
     // Shranimo pozicijo
-    dogodek.pos = {long : position.coords.longitude, lat : position.coords.latitude};
+    dogodek.pos = {lon : position.coords.longitude, lat : position.coords.latitude};
     
     console.log("Pridobljena pozicija: " + JSON.stringify(dogodek.pos));
 }

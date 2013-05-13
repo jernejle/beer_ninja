@@ -20,7 +20,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 @Entity
 @XmlRootElement
 public class Event {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private int id;

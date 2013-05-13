@@ -34,7 +34,8 @@ function loginUser() {
 	 $.ajax({
 			type : "POST",
 			contentType : "application/json",
-			url : "http://192.168.1.2:8080/RateABeer_web/rest/user/login",
+//			url : "http://192.168.1.2:8080/RateABeer_web/rest/user/login",
+			url : restUrl + "user/login",
 			processData : false,
 			data : userData,
 			success : function(data) { 
@@ -52,7 +53,7 @@ function loginUser() {
 			  },
 			  error       : function(xhr, textStatus, errorThrown){ 
 				  console.log(textStatus);
-				  console.log(xhr);
+				  console.log(JSON.stringify(xhr));
 				  alert("Napaka: " + xhr + " " + xhr.status);
 				  alert(JSON.stringify(xhr));
 				  alert(xhr.responseText);
