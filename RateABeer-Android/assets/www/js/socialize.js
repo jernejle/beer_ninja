@@ -112,13 +112,6 @@ function onDeviceReady() {
 				} else {
 					console.log("REZULTAT NEUSPESNO");
 				}	
-				
-				navigator.notification.alert(
-					    'You are the winner!',  // message
-					    alertDismissed,         // callback
-					    'Game Over',            // title
-					    'Done'                  // buttonName
-					);
 
 				
 			  },

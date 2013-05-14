@@ -1,5 +1,6 @@
 package com.rateabeer.pojo;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.util.Collection;
 
@@ -19,8 +20,12 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 @Entity
 @XmlRootElement
-public class Event {
+public class Event implements Serializable {
 	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private int id;
