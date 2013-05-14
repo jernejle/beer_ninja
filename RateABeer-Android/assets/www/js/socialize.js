@@ -1,26 +1,26 @@
-var dogodek = {pos : 'testing position'};
+var dogodek = {pos : {lon : '0', lat : '0'}};
 
 function initNativeDatePicker() {
-	$('.nativedatepicker').focus(function(event) {
-
-		var currentField = $(this);
-		var myNewDate = Date.parse(currentField.val()) || new Date();
-
-		// Same handling for iPhone and Android
-		window.plugins.datePicker.show({
-			date : myNewDate,
-			mode : 'date', // date or time or blank for both
-			allowOldDates : true
-		}, function(returnDate) {
-			var newDate = new Date(returnDate);
-			currentField.val(newDate.toString("dd/MMM/yyyy"));
-
-			// This fixes the problem you mention at the bottom of this script
-			// with it not working a second/third time around, because it is in
-			// focus.
-			currentField.blur();
-		});
-	});
+//	$('.nativedatepicker').focus(function(event) {
+//
+//		var currentField = $(this);
+//		var myNewDate = Date.parse(currentField.val()) || new Date();
+//
+//		// Same handling for iPhone and Android
+//		window.plugins.datePicker.show({
+//			date : myNewDate,
+//			mode : 'date', // date or time or blank for both
+//			allowOldDates : true
+//		}, function(returnDate) {
+//			var newDate = new Date(returnDate);
+//			currentField.val(newDate.toString("dd/MMM/yyyy"));
+//
+//			// This fixes the problem you mention at the bottom of this script
+//			// with it not working a second/third time around, because it is in
+//			// focus.
+//			currentField.blur();
+//		});
+//	});
 
 	$('.nativetimepicker').focus(function(event) {
 		var currentField = $(this);
@@ -43,6 +43,7 @@ function initNativeDatePicker() {
 
 			currentField.blur();
 		});
+		
 	});
 };
 
@@ -68,23 +69,32 @@ function onDeviceReady() {
 
 	$('#createEventButton').click(function() {
 		
+		var usersInvited = new Array();
+		
+		var usersArray = $('.userCheckBox');
+		$.each(usersArray, function(i, item){
+			console.log("Checked: " + usersArray.eq(i).is(':checked'));
+			if (usersArray.eq(i).is(':checked') == true) {
+				usersInvited.push({id : usersArray.eq(i).attr('value')});
+			}
+		});
+		
 		console.log("SOCIALIZE - ZACETEK");
 
 		console.log('Trenutno prijavljen uporabnik: ' + window.sessionStorage.getItem("userId"));
-		
-		console.log('Pozicija: ' + JSON.stringify(dogodek.pos));
-		
-		var des = $('eventDescription').val();
-		var isPublicEvent = ($('#flipPublicEvent').val() === 'yes') ? true : false;
+
+		var des = $('#eventDescription').val();
+		var isPublicEvent = ($('#flipPublicEvent').val() == 'yes') ? 1 : 0;
 		
 		var data = JSON.stringify({
 			id : -1,
 			date : new Date(),
-			description : des,
-			lat :  dogodek.pos.lat,
-			lon :  dogodek.pos.lon,
+			description : des + '',
+			lat :  dogodek.pos.lat + '',
+			lon :  dogodek.pos.lon + '',
 			publicEvent : isPublicEvent,
 			user : {id : window.sessionStorage.getItem("userId")},
+			invited: JSON.stringify(usersInvited),
 		});
 		
 		console.log("Poslani podatki: "  + data);
@@ -101,7 +111,7 @@ function onDeviceReady() {
 				console.log('Klic uspesen.');
 				console.log(JSON.stringify(data));
 				
-				if (data.result === 'true') {
+				if (data.result == true) {
 					console.log("REZULTAT USPESNO");
 					navigator.notification.alert(
 						    'Dogodek je bil uspešno dodan.',  // message
@@ -112,7 +122,6 @@ function onDeviceReady() {
 				} else {
 					console.log("REZULTAT NEUSPESNO");
 				}	
-
 				
 			  },
 			  error       : function(xhr, textStatus, errorThrown){ 
@@ -143,10 +152,44 @@ function onError(error) {
 	alert(errorMessage);
 }
 
+function fetchUsers() {
+	$.ajax({
+		type : "GET",
+		url : restUrl + "user/users/",
+		dataType : "json",
+		success : function(data) {
+//			console.log(JSON.stringify(data));
+			
+			var jsonData = (data.user instanceof Array ? data.user : data);
+			var listItem = "";
+			$.each(jsonData, function(i, item) {
+//				console.log("Uporabnik: " + item.username);
+				
+				listItem = "<input type='checkbox' name='checkbox-"+item.id+"' id='checkbox-mini-"+item.id+"' value='"+item.id+"' class='custom userCheckBox' data-mini='true' /><label for='checkbox-mini-"+item.id+"'>"+item.username+"</label>";
+				
+				$('#usersList').prepend("<li>"+listItem+"</li>");
+
+				$('#usersList').trigger('create');
+				$("#usersList").listview('refresh');
+			});
+			$('#usersList').trigger('create');
+			$("#usersList").listview('refresh');
+		},
+		error : function(xhr, textStatus, errorThrown) {
+			alert("Napaka: " + xhr + " " + xhr.status);
+			alert(xhr.responseText);
+		}
+	});
+}
+
 $(document).ready(function() {
 
 	initNativeDatePicker();
 
 	document.addEventListener("deviceready", onDeviceReady, false);
 
+//	$('#usersList').trigger('create');
+//	$("#usersList").listview('refresh');
+	
+	fetchUsers();
 });

@@ -22,6 +22,21 @@ public class EventService {
 	EventDao eventdao = new EventDao();
 	
 	@GET
+	@Path("/events")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Event> getAllEvents() {
+		List<Event> events = eventdao.getAllEvents();
+		if (events == null) events = new ArrayList<Event>();
+		
+		for (Event e : events) {
+			System.out.println("Invited: " + e.getInvited());
+			
+		}
+		
+		return events;
+	}
+	
+	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Event getEvent(@PathParam("id") int id) {
@@ -53,26 +68,36 @@ public class EventService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public String createEvent(Event e) {
-
-		System.out.println("Sprejet Event: " + e);
+		System.out.println("Invited: " + e.getInvited());
+		for (User us : e.getInvited()) {
+			System.out.println("Invited: " + us.getId());
+		}
 		
+		System.out.println("Sprejet Event: " + e);
+		System.out.println("User: " + e.getUser().getId());
 		User user = e.getUser();
 		
 		UserDao ud = new UserDao();
 		user = ud.getUser(user.getId());
+		System.out.println("Pridobljen user: " + user);
 		e.setUser(user);
-		
+		System.out.println("Public event: " + e.getPublicEvent());
 		Event event = new Event();
 		event.setUser(user);
+		
+		System.out.println(e.getDate());
+		System.out.println("Pridobljen user ID: " + user.getId());
+		System.out.println("Is public event: " + e.getPublicEvent());
+		System.out.println("Event description: " + e.getDescription());
+		System.out.println("Lon: " + e.getLon());
+		System.out.println("Lat: " + e.getLat());
+		event = new Event();
+		event.setUser(user);
 		event.setDate(new java.sql.Date(new Date().getTime()));
+		event.setPublicEvent(e.getPublicEvent());
 		event.setDescription(e.getDescription());
-//		event.setGoing(new ArrayList<User>());
-		event.setId(-1);
-//		event.setInvited(new ArrayList<User>());
 		event.setLat(e.getLat());
 		event.setLon(e.getLon());
-		event.setPublicEvent(e.getPublicEvent());
-		
 		boolean result = eventdao.addEvent(event);
 		
 		return "{'result': '"+result+"'}";

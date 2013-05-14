@@ -3,7 +3,9 @@ package com.rateabeer.pojo;
 import java.io.Serializable;
 import java.sql.Date;
 import java.util.Collection;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -29,28 +31,28 @@ public class Event implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.TABLE)
 	private int id;
-	@NotNull
+//	@NotNull
 	private Date date;
-	@NotNull
+//	@NotNull
 	private String description;
-	@NotNull
+//	@NotNull
 	private String lat;
-	@NotNull
+//	@NotNull
 	private String lon;
-	@NotNull
+//	@NotNull
 	private int publicEvent;
 
 	@ManyToOne
-	@NotNull
+//	@NotNull
 	private User user;
 
 	@OneToMany(fetch=FetchType.LAZY)
 	@JoinTable(name = "EVENT_GOING", joinColumns = { @JoinColumn(name = "EVENT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "id") })
 	private Collection<User> going;
 
-	@OneToMany(fetch=FetchType.LAZY)
+	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinTable(name = "EVENT_INVITED", joinColumns = { @JoinColumn(name = "EVENT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "id") })
-	private Collection<User> invited;
+	private List<User> invited;
 
 	public int getId() {
 		return id;
@@ -111,11 +113,11 @@ public class Event implements Serializable {
 	}
 
 	@XmlTransient
-	public Collection<User> getInvited() {
+	public List<User> getInvited() {
 		return invited;
 	}
 
-	public void setInvited(Collection<User> invited) {
+	public void setInvited(List<User> invited) {
 		this.invited = invited;
 	}
 

@@ -1,5 +1,8 @@
 package com.rateabeer.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
@@ -9,6 +12,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import com.rateabeer.pojo.Beer;
 import com.rateabeer.pojo.User;
 import com.ratebeer.dao.UserDao;
 import com.sun.jersey.api.json.JSONWithPadding;
@@ -25,6 +29,15 @@ public class UserService {
 		User u = udao.getUser(id);
 		if (u == null) u = new User();
 		return u;
+	}
+	
+	@GET
+	@Path("/users")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<User> getUsers() {
+		List<User> users = udao.getUsers();
+		if (users == null) users = new ArrayList<User>();
+		return users;
 	}
 	
 	// WS for jsonp request

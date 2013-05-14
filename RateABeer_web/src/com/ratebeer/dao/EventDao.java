@@ -67,6 +67,20 @@ public class EventDao {
 		}
 	}
 	
+	public List<Event> getAllEvents() {
+		em = DB.getDBFactory().createEntityManager();
+		List<Event> events = null;
+		try {
+			Query q = em.createQuery("SELECT e FROM Event e");
+			events = (List<Event>) q.getResultList();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			em.close();
+		}
+		return events;
+	}
+	
 	public List<Event> getInvitedEvents(int userId) {
 		em = DB.getDBFactory().createEntityManager();
 		List<Event> events = null;

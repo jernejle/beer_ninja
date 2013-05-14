@@ -1,9 +1,13 @@
 package com.ratebeer.dao;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import com.rateabeer.pojo.Beer;
 import com.rateabeer.pojo.User;
 import com.ratebeer.db.DB;
 
@@ -28,6 +32,19 @@ public class UserDao {
 		return user;
 	}
 
+	public List<User> getUsers() {
+		em = DB.getDBFactory().createEntityManager();
+		List<User> users = new ArrayList<User>();
+		try {
+			Query q = em.createQuery("SELECT u FROM User u ORDER BY u.username DESC");
+			users = (List<User>) q.getResultList();
+		} catch (Exception e) {
+		} finally {
+			em.close();
+		}
+		return users;
+	}
+	
 	public User getUser(int id) {
 		em = DB.getDBFactory().createEntityManager();
 		User u = null;
