@@ -22,6 +22,7 @@ public class EventDao {
 			em.getTransaction().commit();
 			added = true;
 		} catch (Exception e) {
+			e.printStackTrace();
 			System.out.println(e.getMessage());
 		} finally {
 			em.close();

@@ -1,6 +1,7 @@
 package com.rateabeer.rest;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.ws.rs.Consumes;
@@ -52,8 +53,8 @@ public class EventService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public String createEvent(Event e) {
-		
-		System.out.println("Sprejet Event: " + e.getLat());
+
+		System.out.println("Sprejet Event: " + e);
 		
 		User user = e.getUser();
 		
@@ -61,7 +62,18 @@ public class EventService {
 		user = ud.getUser(user.getId());
 		e.setUser(user);
 		
-		boolean result = eventdao.addEvent(e);
+		Event event = new Event();
+		event.setUser(user);
+		event.setDate(new java.sql.Date(new Date().getTime()));
+		event.setDescription(e.getDescription());
+//		event.setGoing(new ArrayList<User>());
+		event.setId(-1);
+//		event.setInvited(new ArrayList<User>());
+		event.setLat(e.getLat());
+		event.setLon(e.getLon());
+		event.setPublicEvent(e.getPublicEvent());
+		
+		boolean result = eventdao.addEvent(event);
 		
 		return "{'result': '"+result+"'}";
 	}
