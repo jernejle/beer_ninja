@@ -75,7 +75,7 @@ $(function() {
 			if (val == "yes") {
 				$("#searchPlaces").hide();
 				$("#showPlaces").empty();
-				navigator.geolocation.getCurrentPosition(onSuccess, onError);
+				navigator.geolocation.getCurrentPosition(onSuccess, onError, { enableHighAccuracy: true });
 			} else {
 				$("#searchPlaces").show();
 			}
