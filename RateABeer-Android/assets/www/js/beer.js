@@ -83,8 +83,12 @@ $(function() {
 		});
 	};
 
+	$('#markLocationDiv').on('pageshow', function(event, ui) {
+		$.fn.searchPlacesBind();
+	});
+
 	$.fn.searchPlacesBind = function() {
-		$(".search-places").keyup(function() {
+		$(".search-places").on('keyup', function() {
 			delay(function() {
 				var val = $(".search-places").val();
 				if (val.length < 4)
@@ -581,24 +585,28 @@ $(function() {
 									.append("<img class='map-icon-location' src='img/web/google-maps-icon.png' />");
 							divPlace.appendTo($("#showPlaces"));
 						});
-		$(".locationPlace").click(
-				function() {
-					var name = $(this).text();
-					$("#showPlaces .map-pin").remove();
+		$(".locationPlace")
+				.click(
+						function() {
+							var name = $(this).text();
+							$("#showPlaces .map-pin").remove();
 
-					if (name != chosenLocationName) {
-						$(this).append("<img class='map-pin' src='img/web/map_pin.png' />");	
-						var tmpLocation = $.fn.getCoordinatesFromDiv($(this));
-						chosenLocationName = tmpLocation.user;
-						chosenLocationLat = tmpLocation.lat;
-						chosenLocationLon = tmpLocation.lon;
-					} else {
-						chosenLocationName = null;
-						chosenLocationLat = null;
-						chosenLocationLon = null;
-					}
+							if (name != chosenLocationName) {
+								$(this)
+										.append(
+												"<img class='map-pin' src='img/web/map_pin.png' />");
+								var tmpLocation = $.fn
+										.getCoordinatesFromDiv($(this));
+								chosenLocationName = tmpLocation.user;
+								chosenLocationLat = tmpLocation.lat;
+								chosenLocationLon = tmpLocation.lon;
+							} else {
+								chosenLocationName = null;
+								chosenLocationLat = null;
+								chosenLocationLon = null;
+							}
 
-				});
+						});
 
 		$(".map-icon-location").click(function() {
 			$('#map_canvas').gmap('destroy');
