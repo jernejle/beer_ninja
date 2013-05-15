@@ -11,6 +11,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import com.rateabeer.pojo.Event;
 import com.rateabeer.pojo.User;
 import com.ratebeer.dao.EventDao;
@@ -63,25 +66,49 @@ public class EventService {
 		return events;
 	}
 	
+//	@POST
+//	@Path("/create/{id}/invited")
+//	@Consumes(MediaType.APPLICATION_JSON)
+//	@Produces(MediaType.APPLICATION_JSON)
+//	public String createEventInvited(@PathParam("id") int idEvent, List<User> invited) {
+//		
+//		System.out.println("Dodajanje povabljenih za dogodek id: " + idEvent);
+//		System.out.println("Povabljeni: " + invited.size());
+//		
+//		boolean result = false;
+//		try {
+//			Event event = eventdao.getEvent(idEvent);
+//			event.getInvited().addAll(invited);
+//			eventdao.updateEvent(event);
+//			result = true;
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//		
+//		return "{\"result\": \""+result+"\"}";
+//	}
+	
 	@POST
-	@Path("/create/{id}/invited")
+	@Path("/create/{id}/invite")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public String createEventInvited(@PathParam("id") int idEvent, List<User> invited) {
+	public String createEventInvite(@PathParam("id") int idEvent, User user) {
 		
 		System.out.println("Dodajanje povabljenih za dogodek id: " + idEvent);
-		System.out.println("Povabljeni: " + invited.size());
+		System.out.println("Povabljeni: " + user.getId());
 		
 		boolean result = false;
 		try {
 			Event event = eventdao.getEvent(idEvent);
-			event.getInvited().addAll(invited);
+			User u = new UserDao().getUser(user.getId());
+			event.getInvited().add(u);
+			eventdao.updateEvent(event);
 			result = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		
-		return "{'result': '"+result+"'}";
+		return "{\"result\": \""+result+"\"}";
 	}
 	
 	@POST
@@ -89,10 +116,10 @@ public class EventService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public String createEvent(Event e) {
-		System.out.println("Invited: " + e.getInvited());
-		for (User us : e.getInvited()) {
-			System.out.println("Invited: " + us.getId());
-		}
+//		System.out.println("Invited: " + e.getInvited());
+//		for (User us : e.getInvited()) {
+//			System.out.println("Invited: " + us.getId());
+//		}
 		
 		System.out.println("Sprejet Event: " + e);
 		System.out.println("User: " + e.getUser().getId());
@@ -124,7 +151,10 @@ public class EventService {
 		boolean result = (savedEvent == null) ? false : true;
 		int idEvent = (savedEvent == null) ? -1 : savedEvent.getId();
 		
-		return "{'result': '"+result+"', 'idEvent' : '"+idEvent+"'}";
+//		JsonParser parser = new JsonParser();
+//		JsonObject o = (JsonObject) parser.parse("{\"result\": \""+result+"\", \"idEvent\" : \""+idEvent+"\"}");
+//		System.out.println( o.toString());
+		return "{\"result\": \""+result+"\", \"idEvent\" : \""+idEvent+"\"}";
 	}
 	
 }

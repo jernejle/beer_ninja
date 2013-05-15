@@ -51,6 +51,7 @@ public class UserDao {
 		try {
 			u = em.find(User.class, id);
 		} catch (Exception e) {
+			e.printStackTrace();
 		} finally {
 			em.close();
 		}

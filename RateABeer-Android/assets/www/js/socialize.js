@@ -111,13 +111,37 @@ function onDeviceReady() {
 				console.log('Klic uspesen.');
 				console.log(JSON.stringify(data));
 				
-				if (data.result == true) {
+				console.log("Ustvarjen dogodek z ID: " + data.idEvent);
+				
+				if (data.result === 'true') {
+					console.log('Users invited: ' + JSON.stringify(usersInvited));
+					
+					$.each(usersInvited, function(i, item) {
+						$.ajax({
+							type : "POST",
+							contentType : "application/json",
+							url : restUrl + "event/create/"+data.idEvent+"/invite",
+							processData : false,
+							data : JSON.stringify(usersInvited[i]),
+							success : function(dataInvited) { 
+
+								console.log('Klic uspesen: ' + JSON.stringify(item));
+								console.log(JSON.stringify(dataInvited));
+
+							  },
+							  error       : function(xhr, textStatus, errorThrown){ 
+								  console.log(textStatus);
+								  console.log(JSON.stringify(xhr));
+							  }
+						});
+					});
+					
 					console.log("REZULTAT USPESNO");
 					navigator.notification.alert(
 						    'Dogodek je bil uspešno dodan.',  // message
-						    function() {window.location.replace('socialize.html');},         // callback
-						    'Dogodek dodan',            // title
-						    'Zapri'                  // buttonName
+						    function() {window.location.replace('socialize.html');}, // callback
+						    'Dogodek dodan', // title
+						    'Zapri' // buttonName
 						);
 				} else {
 					console.log("REZULTAT NEUSPESNO");
@@ -125,12 +149,10 @@ function onDeviceReady() {
 				
 			  },
 			  error       : function(xhr, textStatus, errorThrown){ 
+				  console.log("NAPAKA PRI KLICU USTVARJANJA DOGODKA");
 				  console.log(textStatus);
 				  console.log(JSON.stringify(xhr));
-				  alert("Napaka: " + xhr + " " + xhr.status);
-				  alert(JSON.stringify(xhr));
-				  alert(xhr.responseText);
-			  } 
+			  }
 		});
 		
 		console.log("SOCIALIZE - KONEC");
@@ -158,8 +180,7 @@ function fetchUsers() {
 		url : restUrl + "user/users/",
 		dataType : "json",
 		success : function(data) {
-//			console.log(JSON.stringify(data));
-			
+
 			var jsonData = (data.user instanceof Array ? data.user : data);
 			var listItem = "";
 			$.each(jsonData, function(i, item) {
