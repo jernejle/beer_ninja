@@ -64,6 +64,27 @@ public class EventService {
 	}
 	
 	@POST
+	@Path("/create/{id}/invited")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String createEventInvited(@PathParam("id") int idEvent, List<User> invited) {
+		
+		System.out.println("Dodajanje povabljenih za dogodek id: " + idEvent);
+		System.out.println("Povabljeni: " + invited.size());
+		
+		boolean result = false;
+		try {
+			Event event = eventdao.getEvent(idEvent);
+			event.getInvited().addAll(invited);
+			result = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "{'result': '"+result+"'}";
+	}
+	
+	@POST
 	@Path("/create/")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -98,9 +119,12 @@ public class EventService {
 		event.setDescription(e.getDescription());
 		event.setLat(e.getLat());
 		event.setLon(e.getLon());
-		boolean result = eventdao.addEvent(event);
+		Event savedEvent = eventdao.addEvent(event);
 		
-		return "{'result': '"+result+"'}";
+		boolean result = (savedEvent == null) ? false : true;
+		int idEvent = (savedEvent == null) ? -1 : savedEvent.getId();
+		
+		return "{'result': '"+result+"', 'idEvent' : '"+idEvent+"'}";
 	}
 	
 }

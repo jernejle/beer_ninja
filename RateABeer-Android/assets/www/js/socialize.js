@@ -94,7 +94,7 @@ function onDeviceReady() {
 			lon :  dogodek.pos.lon + '',
 			publicEvent : isPublicEvent,
 			user : {id : window.sessionStorage.getItem("userId")},
-			invited: JSON.stringify(usersInvited),
+			//invited: JSON.stringify(usersInvited),
 		});
 		
 		console.log("Poslani podatki: "  + data);

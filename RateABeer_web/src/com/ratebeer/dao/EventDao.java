@@ -13,21 +13,24 @@ public class EventDao {
 
 	private EntityManager em;
 
-	public boolean addEvent(Event event) {
+	public Event addEvent(Event event) {
 		em = DB.getDBFactory().createEntityManager();
-		boolean added = false;
+//		boolean added = false;
 		try {
 			em.getTransaction().begin();
 			em.persist(event);
+			em.flush();
+			em.refresh(event);
 			em.getTransaction().commit();
-			added = true;
+//			added = true;
 		} catch (Exception e) {
 			e.printStackTrace();
 			System.out.println(e.getMessage());
+			event = null;
 		} finally {
 			em.close();
 		}
-		return added;
+		return event;
 	}
 
 	public Event getEvent(int id) {
