@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="initial-scale=1.0, user-scalable=no" />
+<meta name="apple-mobile-web-app-capable" content="yes" />
+<meta name="apple-mobile-web-app-status-bar-style" content="black" />
+<meta name="format-detection" content="telephone=no" />
+<meta name="viewport"
+	content="user-scalable=no, initial-scale=1, maximum-scale=1, minimum-scale=1, width=device-width, height=device-height, target-densitydpi=device-dpi" />
+
+<link rel="stylesheet" href="css/jquery.mobile-1.3.1.min.css" />
+
+<script src="js/jquery-1.9.1.min.js"></script>
+<script src="js/jquery.mobile-1.3.1.min.js"></script>
+<script type="text/javascript" src="cordova-2.6.0.js"></script>
+<script type="text/javascript" src="js/events.js"></script>
+<script type="text/javascript"
+	src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDSxa1X6pQGZiC_d1Pz7-E7Nlv-acG4UjU&sensor=false"></script>
+<script type="text/javascript" src="js/jquery.ui.map.js"></script>
+
+<script type="text/javascript" src="js/_settings.js"></script>
+
+<link rel="stylesheet" href="css/style.css" />
+<title></title>
+<script>
+	var chosenBeer = 0;
+	var chosenLocation = 0;
+	var beerData = null;
+	var commentsPage = 1;
+	var commentsData = null;
+	var dialogMessage = false;
+	var recentBeers = null;
+</script>
+</head>
+<body>
+	<!-- Search -->
+	<div data-role="page" id="search">
+		<div data-theme="a" data-role="header">
+			<div style="text-align: center">
+				<img style="width: 320px; height: 38px" src="img/logo.png" />
+			</div>
+		</div>
+		<div data-role="content" class="content">
+			<div id="search">
+				<input type="search" name="search" class="search-input"
+					id="search-basic" value="">
+			</div>
+
+			<div class="ui-grid-b my-breakpoint buttons">
+				<div class="ui-block-a">
+					<a data-role="button" id="allEventsLink" href=""> All Events </a>
+				</div>
+				<div class="ui-block-b">
+					<a data-role="button" id="invitedEventsLink" href=""> Invited </a>
+				</div>
+				<div class="ui-block-c">
+					<a data-role="button" id="goingEventsLink" data-theme="" href=""> Going </a>
+				</div>
+			</div>
+
+			<div class="events">
+				<ul class="events_ul" data-role="listview">
+				</ul>
+			</div>
+
+		</div>
+	</div>
+
+	<!-- Event Info -->
+	<div data-role="page" id="event">
+		<div data-theme="a" data-role="header">
+			<div style="text-align: center">
+				<img style="width: 320px; height: 38px" src="img/logo.png" />
+			</div>
+		</div>
+		<div data-role="content" class="content">
+			<div class="ui-grid-a my-breakpoint">
+				<div class="ui-block-a">
+					<span>Event description</span> <br />
+					<span>Event host</span>					
+				</div>
+				<div class="ui-block-b">
+					<span class="eventDescription"></span> <br />
+					<span class="eventHost"></span>
+				</div>
+			</div>
+			<div class="ui-grid-a my-breakpoint category_ratings">
+				<div class="ui-block-a">
+					<div style="text-align: center;">Aroma</div>
+				</div>
+				<div class="ui-block-b">
+					<div class="stars" id="aroma_rating">
+						<img alt="" src="img/web/star.png"> <img alt=""
+							src="img/web/star.png"> <img alt="" src="img/web/star.png">
+						<img alt="" src="img/web/star.png"> <img alt=""
+							src="img/web/star.png">
+					</div>
+				</div>
+				<div class="ui-block-a">
+					<div style="text-align: center;">Flavour</div>
+				</div>
+				<div class="ui-block-b">
+					<div class="stars" id="flavour_rating">
+						<img alt="" src="img/web/star.png"> <img alt=""
+							src="img/web/star.png"> <img alt="" src="img/web/star.png">
+						<img alt="" src="img/web/star.png"> <img alt=""
+							src="img/web/star.png">
+					</div>
+				</div>
+				<div class="ui-block-a">
+					<div style="text-align: center">Alcohol Content</div>
+				</div>
+				<div class="ui-block-b">
+					<div class="stars" id="alcohol_content_rating">
+						<img alt="" src="img/web/star.png"> <img alt=""
+							src="img/web/star.png"> <img alt="" src="img/web/star.png">
+						<img alt="" src="img/web/star.png"> <img alt=""
+							src="img/web/star.png">
+					</div>
+				</div>
+			</div>
+
+			<div class="description">
+				<div style="text-align: left">Description</div>
+				<div class="descText"></div>
+			</div>
+
+			<div class="ui-grid-b my-breakpoint buttons">
+				<div class="ui-block-a">
+					<a data-role="button" data-theme="b" href="#beer"> Info </a>
+				</div>
+				<div class="ui-block-b">
+					<a data-role="button" id="commentshref" href="#comments">
+						Comments </a>
+				</div>
+				<div class="ui-block-c">
+					<a data-role="button" href="#search"> Search </a>
+				</div>
+
+				<div class="ui-block-a">
+					<a data-role="button" id="beerLocations" href="#locations">
+						Locations </a>
+				</div>
+				<div class="ui-block-b">
+					<a data-role="button" href="#ratingDialog" data-rel="dialog"
+						data-transition="pop"> Rate beer </a>
+				</div>
+				<div class="ui-block-c">
+					<a data-role="button" id="searchPlacesHref" href="#markLocationDiv">Mark
+						location of beer</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--  Comments -->
+	<div data-role="page" id="comments">
+		<div data-theme="a" data-role="header">
+			<div style="text-align: center">
+				<img style="width: 320px; height: 38px" src="img/logo.png" />
+			</div>
+		</div>
+		<div data-role="content" class="content">
+			<h1>Comments</h1>
+			<textarea cols="40" rows="8" name="textarea" id="commentInput"></textarea>
+			<div data-role="controlgroup" class="comment_buttons"
+				data-type="horizontal">
+				<a id="sendCommentHref" data-role="button">Send comment</a> <a
+					id="resetHref" data-role="button">Reset</a>
+			</div>
+			<div class="allcomments"></div>
+
+			<div class="loadmore">Load more comments</div>
+
+			<div class="ui-grid-b my-breakpoint buttons">
+				<div class="ui-block-a">
+					<a data-role="button" href="#beer"> Info </a>
+				</div>
+				<div class="ui-block-b">
+					<a data-role="button" data-theme="b" href="#comment"> Comments
+					</a>
+				</div>
+				<div class="ui-block-c">
+					<a data-role="button" href="#search"> Search </a>
+				</div>
+			</div>
+		</div>
+		<a id='dialogLink' href="#dialog" data-rel="dialog"
+			data-transition="pop" style='display: none;'></a>
+	</div>
+
+	<!-- Beers on specific location -->
+	<div data-role="page" id="beersOnLocations">
+		<div data-theme="a" data-role="header">
+			<div style="text-align: center">
+				<img style="width: 320px; height: 38px" src="img/logo.png" />
+			</div>
+		</div>
+		<div data-role="content" class="content">
+			<h1>Beers on location</h1>
+			<div class="beersOnLocation"></div>
+
+			<div class="ui-grid-b my-breakpoint buttons">
+				<div class="ui-block-a">
+					<a data-role="button" href="#beer"> Info </a>
+				</div>
+				<div class="ui-block-b">
+					<a data-role="button" class="locationMaps" href="#mapsPage">Maps</a>
+				</div>
+				<div class="ui-block-c">
+					<a data-role="button" href="#search"> Search </a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!--  Share beer -->
+	<div data-role="page" id="share">
+		<div data-theme="a" data-role="header">
+			<div style="text-align: center">
+				<img style="width: 320px; height: 38px" src="img/logo.png" />
+			</div>
+		</div>
+		<div data-role="content" class="content">
+			<div class="ui-grid-a my-breakpoint">
+				<div class="ui-block-a" style="text-align: center">
+					<img alt="" src="img/web/beer_pic.png">
+				</div>
+				<div class="ui-block-b">
+					<span class="title">Laško Zlatorog</span><br> <span
+						class="brew">Laško</span><br>
+
+					<div class="overallrating">
+						Overall
+						<div class="stars">
+							<img alt="" src="img/web/star_blank.png"> <img alt=""
+								src="img/web/star_blank.png"> <img alt=""
+								src="img/web/star_blank.png"> <img alt=""
+								src="img/web/star_blank.png"> <img alt=""
+								src="img/web/star.png">
+						</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="ui-grid-a my-breakpoint buttons">
+				<div class="ui-block-a">
+					<a data-role="button" href="#beer"> Info </a>
+				</div>
+				<div class="ui-block-b">
+					<a data-role="button" href="#search"> Search </a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Message dialog  -->
+	<div data-role="page" id="dialog">
+		<div data-role="header">
+			<h1 id="dialogtitle">Message</h1>
+		</div>
+		<div data-role="content" id="dialogText"></div>
+	</div>
+
+	<!-- Rating mobile -->
+	<div data-role="page" id="ratingDialog">
+		<div data-role="header">
+			<h1 id="dialogtitle">Rate this beer</h1>
+		</div>
+		<div data-role="content">
+			<label for="slider-1">Aroma</label> <input type="range"
+				name="aroma-s" id="slider-1" value="1" min="1" max="5" /> <label
+				for="slider-2">Flavour</label> <input type="range"
+				name="slider-flavour" id="slider-2" value="1" min="1" max="5" /> <label
+				for="slider-3">Alcohol Content</label> <input type="range"
+				name="slider-alcohol" id="slider-3" value="1" min="1" max="5" /> <a
+				data-role="button" id="sendRating">Send rating</a>
+		</div>
+	</div>
+
+	<!-- Location Dialog -->
+	<div data-role="page" id="locationDialog">
+		<div data-role="header">
+			<h1 id="dialogtitle">Your location</h1>
+		</div>
+		<div data-role="content" id="locationDialogContent"></div>
+		<a data-role="button" id="sendLocationToServerButton">Send my
+			location</a>
+	</div>
+
+	<!-- Locations -->
+
+	<div data-role="page" id="locations">
+		<div data-theme="a" data-role="header">
+			<div style="text-align: center">
+				<img style="width: 320px; height: 38px" src="img/logo.png" />
+			</div>
+		</div>
+		<div data-role="content" class="content">
+			<h1>Locations</h1>
+			<div class="allLocations"></div>
+			<div class="ui-grid-b my-breakpoint buttons">
+				<div class="ui-block-a">
+					<a data-role="button" href="#beer"> Info </a>
+				</div>
+				<div class="ui-block-b">
+					<a data-role="button" class="locationMaps" href="#mapsPage">Maps</a>
+				</div>
+				<div class="ui-block-c">
+					<a data-role="button" href="#search"> Search </a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Mark location -->
+
+	<div data-role="page" id="markLocationDiv">
+		<div data-theme="a" data-role="header">
+			<div style="text-align: center">
+				<img style="width: 320px; height: 38px" src="img/logo.png" />
+			</div>
+		</div>
+
+		<div data-role="content" class="content">
+
+			<label for="flip-1">Detect current location</label><br /> <select
+				name="flip-1" id="flip-location" data-role="slider">
+				<option value="no">No</option>
+				<option value="yes">Yes</option>
+			</select>
+
+			<div id="searchPlaces">
+				<input type="search" name="search-2" id="search-places"
+					class="search-places" value="" />
+			</div>
+
+			<div id="showPlaces"></div>
+
+			<div id="userLocationInfo" style="display: none"></div>
+
+			<div class="ui-grid-b my-breakpoint buttons">
+				<div class="ui-block-a">
+					<a data-role="button" href="#beer"> Info </a>
+				</div>
+				<div class="ui-block-b">
+					<a data-role="button" id="sendLocationHref" href="#locationDialog"
+						data-rel="dialog" data-transition="pop">Send location</a>
+				</div>
+				<div class="ui-block-c">
+					<a data-role="button" href="#search"> Search </a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<!-- Maps -->
+
+	<div data-role="page" id="mapsPage">
+		<div data-theme="a" data-role="header">
+			<div style="text-align: center">
+				<img style="width: 320px; height: 38px" src="img/logo.png" />
+			</div>
+		</div>
+		<div data-role="content" class="content">
+			<div data-role="content" id="map_canvas"></div>
+		</div>
+		<div class="ui-grid-a my-breakpoint buttons">
+			<div class="ui-block-a">
+				<a data-role="button" href="#beer"> Info </a>
+			</div>
+			<div class="ui-block-b">
+				<a data-role="button" href="#search"> Search </a>
+			</div>
+		</div>
+	</div>
+
+
+</body>
+</html>

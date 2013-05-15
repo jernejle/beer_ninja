@@ -116,5 +116,10 @@ public class EventDao {
 	public void destruct() {
 		em.close();
 	}
+
+	public List<Event> searchEvents(String param) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
 }

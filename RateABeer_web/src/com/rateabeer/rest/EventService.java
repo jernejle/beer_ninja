@@ -10,10 +10,12 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.rateabeer.pojo.Beer;
 import com.rateabeer.pojo.Event;
 import com.rateabeer.pojo.User;
 import com.ratebeer.dao.EventDao;
@@ -40,9 +42,39 @@ public class EventService {
 	}
 	
 	@GET
+	@Path("/search")
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<Event> searchEvents(@QueryParam("param") String param) {
+		if (param == null || param == "" || param.length() < 3) return new ArrayList<Event>();
+		List<Event> events = eventdao.searchEvents(param);
+		if (events == null) events = new ArrayList<Event>();
+		return events;
+	}
+	
+	@GET
 	@Path("/{id}")
 	@Produces(MediaType.APPLICATION_JSON)
 	public Event getEvent(@PathParam("id") int id) {
+		Event e = eventdao.getEvent(id);
+		if (e == null) e = new Event();
+		return e;
+	}
+	
+	@GET
+	@Path("/{id}/invited")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Event getEventInvited(@PathParam("id") int id) {
+		//TODO Invited for event
+		Event e = eventdao.getEvent(id);
+		if (e == null) e = new Event();
+		return e;
+	}
+	
+	@GET
+	@Path("/{id}/going")
+	@Produces(MediaType.APPLICATION_JSON)
+	public Event getEventGoing(@PathParam("id") int id) {
+		//TODO Going for event
 		Event e = eventdao.getEvent(id);
 		if (e == null) e = new Event();
 		return e;
