@@ -24,11 +24,7 @@
 <link rel="stylesheet" href="css/style.css" />
 <title></title>
 <script>
-	var chosenBeer = 0;
 	var chosenLocation = 0;
-	var beerData = null;
-	var commentsPage = 1;
-	var commentsData = null;
 	var dialogMessage = false;
 	var recentBeers = null;
 </script>
@@ -78,11 +74,17 @@
 			<div class="ui-grid-a my-breakpoint">
 				<div class="ui-block-a">
 					<span>Event description</span> <br />
-					<span>Event host</span>					
+					<span>Event host</span>	 <br />
+					<span>Event going</span>	<br />
+					<span>Event invited</span>	<br />	
+					<span>Going to participate?</span>	<br />	
 				</div>
 				<div class="ui-block-b">
 					<span class="eventDescription"></span> <br />
-					<span class="eventHost"></span>
+					<span class="eventHost"></span> <br />
+					<ul class="eventGoing"></ul> <br />
+					<ul class="eventInvited"></ul> <br />
+					<div class="eventGo"></div> <br />
 				</div>
 			</div>
 			<div class="ui-grid-a my-breakpoint category_ratings">

@@ -61,7 +61,7 @@ function onDeviceReady() {
 	db = new DBStorage();
     db.setup();				    
     db.getEntries(function(results) {
-    	
+    	console.log('Index entries: ' + JSON.stringify(results));
     	if (results.length > 0) {
     		
     		var logoutButton = "<a href='#' data-role='button' data-mini='true' id='logoutButton'>Odjava</a>";

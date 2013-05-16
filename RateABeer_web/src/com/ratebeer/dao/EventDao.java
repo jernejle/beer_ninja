@@ -7,6 +7,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
 import com.rateabeer.pojo.Event;
+import com.rateabeer.pojo.User;
 import com.ratebeer.db.DB;
 
 public class EventDao {
@@ -43,6 +44,36 @@ public class EventDao {
 			em.close();
 		}
 		return event;
+	}
+	
+	public List<User> getEventInvited(int eventId) {
+		em = DB.getDBFactory().createEntityManager();
+		List<User> users = null;
+		try {
+//			Query q = em.createQuery("SELECT e FROM Event e INNER JOIN e.invited i where i.id = " + userId);
+			Query q = em.createQuery("SELECT e.invited FROM Event e WHERE e.id =" + eventId);
+			users = (List<User>) q.getResultList();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			em.close();
+		}
+		return users;
+	}
+	
+	public List<User> getEventGoing(int eventId) {
+		em = DB.getDBFactory().createEntityManager();
+		List<User> users = null;
+		try {
+//			Query q = em.createQuery("SELECT e FROM Event e INNER JOIN e.invited i where i.id = " + userId);
+			Query q = em.createQuery("SELECT e.going FROM Event e WHERE e.id =" + eventId);
+			users = (List<User>) q.getResultList();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			em.close();
+		}
+		return users;
 	}
 
 	public void updateEvent(Event event) {

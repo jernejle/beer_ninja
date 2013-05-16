@@ -44,6 +44,7 @@ function loginUser() {
 					db = new DBStorage();
 				    db.setup();				    
 				    db.saveEntry(data, loginSuccessful());
+				    console.log('Login successful.');
 				}
 				
 				console.log('Klic uspesen.');

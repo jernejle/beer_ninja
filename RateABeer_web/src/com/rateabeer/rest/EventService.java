@@ -13,9 +13,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.rateabeer.pojo.Beer;
 import com.rateabeer.pojo.Event;
 import com.rateabeer.pojo.User;
 import com.ratebeer.dao.EventDao;
@@ -63,21 +60,21 @@ public class EventService {
 	@GET
 	@Path("/{id}/invited")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Event getEventInvited(@PathParam("id") int id) {
+	public List<User> getEventInvited(@PathParam("id") int id) {
 		//TODO Invited for event
-		Event e = eventdao.getEvent(id);
-		if (e == null) e = new Event();
-		return e;
+		List<User> users = eventdao.getEventInvited(id);
+		if (users == null) users = new ArrayList<User>();
+		return users;
 	}
 	
 	@GET
 	@Path("/{id}/going")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Event getEventGoing(@PathParam("id") int id) {
+	public List<User> getEventGoing(@PathParam("id") int id) {
 		//TODO Going for event
-		Event e = eventdao.getEvent(id);
-		if (e == null) e = new Event();
-		return e;
+		List<User> users = eventdao.getEventGoing(id);
+		if (users == null) users = new ArrayList<User>();
+		return users;
 	}
 	
 	@GET
@@ -121,6 +118,54 @@ public class EventService {
 //	}
 	
 	@POST
+	@Path("/{id}/invite")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String eventInvite(@PathParam("id") int idEvent, User user) {
+		
+		System.out.println("Dodajanje povabljenih za dogodek id: " + idEvent);
+		System.out.println("Povabljeni: " + user.getId());
+		
+		boolean result = false;
+		try {
+			Event event = eventdao.getEvent(idEvent);
+			User u = new UserDao().getUser(user.getId());
+			event.getInvited().add(u);
+			eventdao.updateEvent(event);
+			result = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "{\"result\": \""+result+"\"}";
+	}
+	
+	@POST
+	@Path("/{id}/go")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String eventGo(@PathParam("id") int idEvent, User user) {
+		
+		System.out.println("Dodajanje povabljenih za dogodek id: " + idEvent);
+		System.out.println("Povabljeni: " + user.getId());
+		
+		boolean result = false;
+		try {
+			Event event = eventdao.getEvent(idEvent);
+			User u = new UserDao().getUser(user.getId());
+			event.getGoing().add(u);
+			if (event.getInvited().contains(u))
+				event.getInvited().remove(u);
+			eventdao.updateEvent(event);
+			result = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "{\"result\": \""+result+"\"}";
+	}
+	
+	@POST
 	@Path("/create/{id}/invite")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -148,11 +193,7 @@ public class EventService {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public String createEvent(Event e) {
-//		System.out.println("Invited: " + e.getInvited());
-//		for (User us : e.getInvited()) {
-//			System.out.println("Invited: " + us.getId());
-//		}
-		
+
 		System.out.println("Sprejet Event: " + e);
 		System.out.println("User: " + e.getUser().getId());
 		User user = e.getUser();
@@ -182,10 +223,7 @@ public class EventService {
 		
 		boolean result = (savedEvent == null) ? false : true;
 		int idEvent = (savedEvent == null) ? -1 : savedEvent.getId();
-		
-//		JsonParser parser = new JsonParser();
-//		JsonObject o = (JsonObject) parser.parse("{\"result\": \""+result+"\", \"idEvent\" : \""+idEvent+"\"}");
-//		System.out.println( o.toString());
+
 		return "{\"result\": \""+result+"\", \"idEvent\" : \""+idEvent+"\"}";
 	}
 	

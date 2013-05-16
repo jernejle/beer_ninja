@@ -27,7 +27,8 @@ DBStorage.prototype.dbErrorHandler = function(e) {
 
 // Generic success handler
 DBStorage.prototype.dbSuccessHandler = function(e) {
-//	console.log('Operation successful!');
+	console.log('Operation successful!');
+	console.dir(JSON.stringify(e));
 }
  
 // Database structure
@@ -43,6 +44,7 @@ DBStorage.prototype.getEntries = function(callback) {
 		function(t) {
 			t.executeSql('select id, email, username, name, lastname, fbid from user order by id asc',[],
 				function(t,results) {
+					//console.log('getEntries result: ' + JSON.stringify(results));
 					callback(that.fixResults(results));
 //					return that.fixResults(results)
 				}, this.dbErrorHandler);
@@ -66,12 +68,13 @@ DBStorage.prototype.saveEntry = function(data, callback) {
 	if (callback == null) {
 		callback = this.dbSuccessHandler;
 	}
-console.dir(data);
+	console.dir(data);
 	this.db.transaction(
 		function(t) {
 			t.executeSql('INSERT OR REPLACE INTO user(id,email,username,name,lastname,fbid) values(?,?,?,?,?,?)', 
 					[data.id, data.email, data.username, data.name, data.lastname, data.fbid],
 					function() { 
+						console.log("Saved: " + JSON.stringify(data));
 						callback();
 					}, this.dbErrorHandler);
 		}, this.dbErrorHandler);
@@ -93,8 +96,9 @@ DBStorage.prototype.fixResults = function(res) {
 	var result = [];
 	for(var i=0, len=res.rows.length; i<len; i++) {
 		var row = res.rows.item(i);
-		result.push(row);
+		result.push(row);		
 	}
+	console.log(JSON.stringify(result));
 	return result;
 }
  

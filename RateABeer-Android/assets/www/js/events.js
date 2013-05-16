@@ -1,6 +1,6 @@
 $(document).ready(function() {
 	
-	var chosenEvent, eventData;
+	var events, chosenEvent, eventData;
 	
 	//document.addEventListener("deviceready", onDeviceReady, false);
 
@@ -55,7 +55,7 @@ $(document).ready(function() {
 							param : val
 						},
 						success : function(data) {
-							parseEvents(data, $("..events_ul"));
+							parseEvents(data, $(".events_ul"));
 							work = false;
 						},
 						error : function(xhr, textStatus, errorThrown) {
@@ -91,7 +91,7 @@ $(document).ready(function() {
 		if (data == null)
 			return;
 		jsonObj = (data.event instanceof Array ? data.event : data);
-
+		events = jsonObj;
 		$.each(jsonObj, function(i, item) {
 			console.log("Element: " + JSON.stringify(item));
 			$(div).prepend("<li><a href='#event' class='choseEvent' data-transition='slide' id='"+item.id+"'>"+item.description+"</a></li>");
@@ -135,6 +135,38 @@ $(document).ready(function() {
 			dataType : "json",
 			processData : false,
 			success : function(data) {
+				
+				// Invited
+//				$.ajax({
+//					type : "GET",
+//					url : restUrl + "event/" + eventId + "/invited",
+//					dataType : "json",
+//					processData : false,
+//					success : function(dataInvited) {
+////						data.invited = dataInvited.user;
+//						console.log('Invited users: ' + JSON.stringify(dataInvited.user));
+//					},
+//					error : function(xhr, textStatus, errorThrown) {
+//						alert("Napaka: " + xhr + " " + xhr.status);
+//						alert(xhr.responseText);
+//					}
+//				});
+				// Going
+//				$.ajax({
+//					type : "GET",
+//					url : restUrl + "event/" + eventId + "/going",
+//					dataType : "json",
+//					processData : false,
+//					success : function(dataGoing) {
+//						data.going = dataGoing.user;
+//						console.log('Goiung users: ' + JSON.stringify(dataGoing));
+//					},
+//					error : function(xhr, textStatus, errorThrown) {
+//						alert("Napaka: " + xhr + " " + xhr.status);
+//						alert(xhr.responseText);
+//					}
+//				});
+				
 				$.fn.parseEventJson(data);
 			},
 			error : function(xhr, textStatus, errorThrown) {
@@ -147,11 +179,23 @@ $(document).ready(function() {
 	// parse event
 	$.fn.parseEventJson = function(jsonData) {
 		eventData = jsonData;
-		console.log("EVENT DESCRIPTION: " + eventData.description);
+		var currentUser = window.sessionStorage.getItem("userId"), currentUserGoing = false, currentUserInvited = false;
+
 		$(".eventDescription").text(eventData.description);
 		$(".eventDescription").html(eventData.description);
 		$(".eventHost").text(eventData.user.username + ' (' + eventData.user.name + ' ' + eventData.user.lastname + ')');
-
+		$.each(eventData.invited, function(i, item) {
+			$(".eventInvited").append("<li>"+item.uesrname+"</li>");
+			if (currentUser === item.id)
+				currentUserInvited = true;
+		});
+		$.each(eventData.going, function(i, item) {
+			$(".eventGoing").append("<li>"+item.uesrname+"</li>");
+			if (currentUser === item.id)
+				currentUserGoing = true;
+		});
+		console.log("Current user invited: " + currentUserInvited);
+		console.log("Current user going: " + currentUserGoing);
 //		var overallR = (parseInt(beerData.rateFlavour)
 //				+ parseInt(beerData.rateAroma) + parseInt(beerData.rateAlcoholContent)) / 3;
 //		$.fn.setRating($(".overallrating").children(":first"), Math
