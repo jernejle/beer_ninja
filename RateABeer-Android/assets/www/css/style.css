@@ -26,6 +26,17 @@ h1 {
 	font-family: cursive;
 }
 
+.icon_div {
+	text-align: center;
+	margin-top: 20px;
+}
+
+.linktext {
+	color: white;
+	display: block;
+	margin-top: -5px;
+}
+
 .overallrating {
 	font-size: 16px;
 	margin-top: 12px;
@@ -128,7 +139,7 @@ h1 {
 	padding-top: 5px;
 }
 
-.recent_beers, .events {
+.recent_beers,.events {
 	margin-top: 40px;
 }
 
