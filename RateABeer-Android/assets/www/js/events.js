@@ -1,7 +1,7 @@
 $(document).ready(function() {
 	
 	var events, chosenEvent, eventData;
-	
+	var displayedEventData;
 	//document.addEventListener("deviceready", onDeviceReady, false);
 
 	// change search buttons style
@@ -10,23 +10,26 @@ $(document).ready(function() {
 		$.fn.setButtonTheme($("#invitedEventsLink"), false);
 		$.fn.setButtonTheme($("#goingEventsLink"), false);
 		$(".search-input").unbind();
-		$.fn.getAllEvents();
-		//$.fn.bindSearch("event/search", $.fn.parseEvents);
+//		$.fn.getAllEvents();
+		$.fn.getEvents("event/events");
+		$.fn.bindSearch("event/search", $.fn.parseEvents);
 	});
 	$("#invitedEventsLink").click(function() {
 		$.fn.setButtonTheme($(this), true);
 		$.fn.setButtonTheme($("#allEventsLink"), false);
 		$.fn.setButtonTheme($("#goingEventsLink"), false);
 		$(".search-input").unbind();
-		//$.fn.bindSearch("location/search/", $.fn.parseLocations);
+		$.fn.getEvents("event/invited/"+window.sessionStorage.getItem("userId"));
+		$.fn.bindSearch("event/search", $.fn.parseEvents);
 	});
 	$("#goingEventsLink").click(function() {
 		$.fn.setButtonTheme($(this), true);
 		$.fn.setButtonTheme($("#allEventsLink"), false);
 		$.fn.setButtonTheme($("#invitedEventsLink"), false);
-		
+		$.fn.getEvents("event/going/"+window.sessionStorage.getItem("userId"));
+		$.fn.bindSearch("event/search", $.fn.parseEvents);
 	});
-	
+
 	$.fn.setButtonTheme = function(link, active) {
 		var newTheme = (active ? "b" : "c");
 
@@ -35,7 +38,7 @@ $(document).ready(function() {
 						+ " ui-btn-up-" + newTheme + " ui-btn-up-" + newTheme);
 		link.attr("data-theme", newTheme).trigger("mouseout");
 	};
-	
+
 	// event listener for search buttons
 	$.fn.bindSearch = function(url, parseEvents) {
 		var work = false;
@@ -85,6 +88,23 @@ $(document).ready(function() {
 		});
 	};
 	
+	$.fn.getEvents = function(url) {
+		$.ajax({
+			type : "GET",
+			url : restUrl + url,
+			dataType : "json",
+			processData : false,
+			success : function(data) {
+				console.log("Pridobljeni dogodki: " + JSON.stringify(data));
+				$.fn.parseEvents(data, $(".events_ul"));
+			},
+			error : function(xhr, textStatus, errorThrown) {
+				alert("Napaka: " + JSON.stringify(xhr) + " " + xhr.status);
+				alert(xhr.responseText);
+			}
+		});
+	};
+	
 	$.fn.parseEvents = function(data, div) {
 		div.empty();
 		var jsonObj = null;
@@ -121,7 +141,7 @@ $(document).ready(function() {
 			} else {
 //				if (dialogMessage == false)
 //					$.fn.bindLoadMore();
-				$.fn.parseBeerJson(eventData);
+				$.fn.parseEventJson(eventData);
 			}
 		});
 	};
@@ -135,39 +155,50 @@ $(document).ready(function() {
 			dataType : "json",
 			processData : false,
 			success : function(data) {
-				
+				displayedEventData = data;
 				// Invited
-//				$.ajax({
-//					type : "GET",
-//					url : restUrl + "event/" + eventId + "/invited",
-//					dataType : "json",
-//					processData : false,
-//					success : function(dataInvited) {
-////						data.invited = dataInvited.user;
-//						console.log('Invited users: ' + JSON.stringify(dataInvited.user));
-//					},
-//					error : function(xhr, textStatus, errorThrown) {
-//						alert("Napaka: " + xhr + " " + xhr.status);
-//						alert(xhr.responseText);
-//					}
-//				});
+				$.ajax({
+					type : "GET",
+					url : restUrl + "event/" + eventId + "/invited",
+					dataType : "json",
+					processData : false,
+					success : function(dataInvited) {
+						if (dataInvited != undefined) {
+							displayedEventData.invited = dataInvited.user;
+							console.log('Invited users: ' + JSON.stringify(dataInvited.user));
+							$.fn.parseEventJsonInvited(dataInvited, $(".eventInvited"));
+						} else {
+							$.fn.parseEventJsonInvited(undefined, $(".eventInvited"));
+						}
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						alert("Napaka: " + xhr + " " + xhr.status);
+						alert(xhr.responseText);
+					}
+				});
 				// Going
-//				$.ajax({
-//					type : "GET",
-//					url : restUrl + "event/" + eventId + "/going",
-//					dataType : "json",
-//					processData : false,
-//					success : function(dataGoing) {
-//						data.going = dataGoing.user;
-//						console.log('Goiung users: ' + JSON.stringify(dataGoing));
-//					},
-//					error : function(xhr, textStatus, errorThrown) {
-//						alert("Napaka: " + xhr + " " + xhr.status);
-//						alert(xhr.responseText);
-//					}
-//				});
+				$.ajax({
+					type : "GET",
+					url : restUrl + "event/" + eventId + "/going",
+					dataType : "json",
+					processData : false,
+					success : function(dataGoing) {
+						if (dataGoing != undefined) {
+							displayedEventData.going = dataGoing.user;
+							console.log('Goiung users: ' + JSON.stringify(dataGoing));
+							$.fn.parseEventJsonGoing(dataGoing, $(".eventGoing"));
+						} else {
+							$.fn.parseEventJsonGoing(undefined, $(".eventGoing"));
+						}
+						
+					},
+					error : function(xhr, textStatus, errorThrown) {
+						alert("Napaka: " + xhr + " " + xhr.status);
+						alert(xhr.responseText);
+					}
+				});
 				
-				$.fn.parseEventJson(data);
+				$.fn.parseEventJson(displayedEventData);
 			},
 			error : function(xhr, textStatus, errorThrown) {
 				alert("Napaka: " + xhr + " " + xhr.status);
@@ -179,23 +210,12 @@ $(document).ready(function() {
 	// parse event
 	$.fn.parseEventJson = function(jsonData) {
 		eventData = jsonData;
-		var currentUser = window.sessionStorage.getItem("userId"), currentUserGoing = false, currentUserInvited = false;
 
 		$(".eventDescription").text(eventData.description);
 		$(".eventDescription").html(eventData.description);
 		$(".eventHost").text(eventData.user.username + ' (' + eventData.user.name + ' ' + eventData.user.lastname + ')');
-		$.each(eventData.invited, function(i, item) {
-			$(".eventInvited").append("<li>"+item.uesrname+"</li>");
-			if (currentUser === item.id)
-				currentUserInvited = true;
-		});
-		$.each(eventData.going, function(i, item) {
-			$(".eventGoing").append("<li>"+item.uesrname+"</li>");
-			if (currentUser === item.id)
-				currentUserGoing = true;
-		});
-		console.log("Current user invited: " + currentUserInvited);
-		console.log("Current user going: " + currentUserGoing);
+		console.log("Displaying event: " + JSON.stringify(displayedEventData));
+
 //		var overallR = (parseInt(beerData.rateFlavour)
 //				+ parseInt(beerData.rateAroma) + parseInt(beerData.rateAlcoholContent)) / 3;
 //		$.fn.setRating($(".overallrating").children(":first"), Math
@@ -206,5 +226,150 @@ $(document).ready(function() {
 //				jsonData.rateAlcoholContent);
 
 	};
+	
+	$.fn.parseEventJsonInvited = function(users, div) {
+		var currentUser = window.sessionStorage.getItem("userId"), currentUserInvited = false;
+
+		var data;		
+		if (users.user instanceof Array) {
+			data = users.user;
+		} else {
+			data = [];
+			data.push(users.user);
+		}
+
+		
+		div.empty();
+		
+		if (data != undefined) {
+			$.each(data, function(i, item) {
+				div.append("<li>"+item.username+"</li>");
+				if (currentUser === item.id)
+					currentUserInvited = true;
+			});
+		}
+		
+		if (currentUserInvited === true) {
+			
+		}
+	};
+	
+	$.fn.parseEventJsonGoing = function(users, div) {
+
+		var currentUser = window.sessionStorage.getItem("userId"), currentUserGoing = false;
+		
+		var data;		
+		if (users.user instanceof Array) {
+			data = users.user;
+		} else {
+			data = [];
+			data.push(users.user);
+		}
+
+		div.empty();
+
+		if (data != undefined) {
+			$.each(data, function(i, item) {
+				div.append("<li>"+item.username+"</li>");
+				if (currentUser === item.id)
+					currentUserGoing = true;
+			});
+		}
+
+		if (currentUserGoing === 'false') {
+			$('.eventParticipation').html("<a href=\"\" data-role=\"button\" data-mini=\"true\" id=\"buttonParticipate\">Participate</a>");
+			$('.eventParticipation').trigger('create');
+			
+			$('#buttonParticipate').bind('click', $.fn.buttonClickParticipate);
+		} else {
+			$('.eventParticipation').html("<a href=\"\" data-role=\"button\" data-mini=\"true\" id=\"buttonParticipate\">Cancel participation</a>");
+			$('.eventParticipation').trigger('create');
+			
+			$('#buttonParticipate').bind('click', $.fn.buttonClickCancelParticipate);
+		}
+		
+	};
+	
+	$.fn.buttonClickParticipate = function() { 
+		var currentUser = window.sessionStorage.getItem("userId");
+		
+		$.ajax({
+			type : "POST",
+			url : restUrl + "event/" + eventData.id + "/go",
+			contentType : "application/json",
+			processData : false,
+			data : JSON.stringify({id : currentUser}),
+			success : function(data) {
+
+				if (data.result === 'true') {
+					console.log("REQUEST SUCCESSFUL");
+					$('#buttonParticipate').text('Cancel participation');
+					$('.eventParticipation').trigger('create');
+					
+					$('#buttonParticipate').unbind();
+					
+					$('#buttonParticipate').bind('click', $.fn.buttonClickCancelParticipate);
+				}
+
+				
+			},
+			error : function(xhr, textStatus, errorThrown) {
+				alert("Napaka: " + xhr + " " + xhr.status);
+				alert(xhr.responseText);
+			}
+		});
+	};
+	
+	$.fn.buttonClickCancelParticipate = function() { 
+		var currentUser = window.sessionStorage.getItem("userId");
+		
+		$.ajax({
+			type : "POST",
+			url : restUrl + "event/" + eventData.id + "/go_cancel",
+			contentType : "application/json",
+			processData : false,
+			data : JSON.stringify({id : currentUser}),
+			success : function(data) {
+
+				if (data.result === 'true') {
+					$('#buttonParticipate').text('Participate');
+					$('.eventParticipation').trigger('create');
+					
+					$('#buttonParticipate').unbind();
+					
+					$('#buttonParticipate').bind('click', $.fn.buttonClickParticipate);
+				}
+
+				
+			},
+			error : function(xhr, textStatus, errorThrown) {
+				alert("Napaka: " + xhr + " " + xhr.status);
+				alert(xhr.responseText);
+			}
+		});
+		
+	};
+	
+	$("#event").on("pageshow", function(event, ui) {
+		$('#map_canvas').gmap('destroy');
+		setTimeout(function() {
+			$('#map_canvas').gmap().bind('init', function(ev, map) {
+//				if (beerLocations != null) {
+//					for ( var i = 0; i < beerLocations.length; i++) {
+						locObj = displayedEventData;
+						console.log("Lon: " + locObj.lon + " Lat: " + locObj.lat);
+						$('#map_canvas').gmap('addMarker', {
+							'position' : locObj.lat + "," + locObj.lon,
+							'bounds' : true
+						}).click(function() {
+							$('#map_canvas').gmap('openInfoWindow', {
+								'content' : locObj.description
+							}, this);
+						});
+//					}
+//				}
+			});
+		}, 200);
+	});
 	
 });
