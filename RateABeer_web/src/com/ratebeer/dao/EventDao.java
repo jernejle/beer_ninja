@@ -6,6 +6,7 @@ import javax.annotation.PreDestroy;
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 
+import com.rateabeer.pojo.Beer;
 import com.rateabeer.pojo.Event;
 import com.rateabeer.pojo.User;
 import com.ratebeer.db.DB;
@@ -149,8 +150,18 @@ public class EventDao {
 	}
 
 	public List<Event> searchEvents(String param) {
-		// TODO Auto-generated method stub
-		return null;
+		em = DB.getDBFactory().createEntityManager();
+		List<Event> events = null;
+		try {
+			Query q = em.createQuery("SELECT e FROM Event e WHERE UPPER(e.description) LIKE :param ORDER BY e.description");
+			q.setParameter("param", "%" + param.toUpperCase() + "%");
+			events = (List<Event>) q.getResultList();
+		} catch (Exception e) {
+			System.out.println(e.toString());
+		} finally {
+			em.close();
+		}
+		return events;
 	}
 	
 }

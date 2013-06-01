@@ -166,6 +166,36 @@ public class EventService {
 	}
 	
 	@POST
+	@Path("/{id}/go_cancel")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public String eventGoCancel(@PathParam("id") int idEvent, User user) {
+		
+		System.out.println("Odstranjanje povabljenih za dogodek id: " + idEvent);
+		
+		boolean result = false;
+		try {
+			Event event = eventdao.getEvent(idEvent);
+			User u = new UserDao().getUser(user.getId());
+			System.out.println("Going 1: " + event.getGoing().size());
+			for (int i = 0; i < event.getGoing().size(); i++) {
+				if (event.getGoing().get(i).getId() == user.getId()) {
+					event.getGoing().remove(i);
+					break;
+				}
+			}
+			event.getGoing().remove(u);
+			System.out.println("Going 2: " + event.getGoing().size());
+			eventdao.updateEvent(event);
+			result = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "{\"result\": \""+result+"\"}";
+	}
+	
+	@POST
 	@Path("/create/{id}/invite")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)

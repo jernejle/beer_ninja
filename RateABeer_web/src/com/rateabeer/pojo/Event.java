@@ -48,7 +48,7 @@ public class Event implements Serializable {
 
 	@OneToMany(fetch=FetchType.LAZY)
 	@JoinTable(name = "EVENT_GOING", joinColumns = { @JoinColumn(name = "EVENT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "id") })
-	private Collection<User> going;
+	private List<User> going;
 
 	@OneToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
 	@JoinTable(name = "EVENT_INVITED", joinColumns = { @JoinColumn(name = "EVENT_ID", referencedColumnName = "ID") }, inverseJoinColumns = { @JoinColumn(name = "USER_ID", referencedColumnName = "id") })
@@ -104,11 +104,11 @@ public class Event implements Serializable {
 	}
 
 	@XmlTransient
-	public Collection<User> getGoing() {
+	public List<User> getGoing() {
 		return going;
 	}
 
-	public void setGoing(Collection<User> going) {
+	public void setGoing(List<User> going) {
 		this.going = going;
 	}
 
