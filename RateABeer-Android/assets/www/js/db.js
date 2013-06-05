@@ -68,7 +68,7 @@ DBStorage.prototype.saveEntry = function(data, callback) {
 	if (callback == null) {
 		callback = this.dbSuccessHandler;
 	}
-	console.dir(data);
+	console.dir("Save entry data: " + data);
 	this.db.transaction(
 		function(t) {
 			t.executeSql('INSERT OR REPLACE INTO user(id,email,username,name,lastname,fbid) values(?,?,?,?,?,?)', 

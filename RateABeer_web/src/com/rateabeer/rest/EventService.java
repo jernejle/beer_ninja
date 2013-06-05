@@ -54,6 +54,7 @@ public class EventService {
 	public Event getEvent(@PathParam("id") int id) {
 		Event e = eventdao.getEvent(id);
 		if (e == null) e = new Event();
+		System.out.println("Fetched event: lon:"+e.getLon()+" lat:"+e.getLat());
 		return e;
 	}
 	
