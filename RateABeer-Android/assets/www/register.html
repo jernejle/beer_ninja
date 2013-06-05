@@ -18,7 +18,7 @@
 <link rel="stylesheet" href="css/style.css" />
 
 <script type="text/javascript" src="js/_settings.js"></script>
-<script type="text/javascript" src="js/login.js"></script>
+<script type="text/javascript" src="js/register.js"></script>
 <script type="text/javascript" src="js/db.js"></script>
 
 <title></title>
@@ -36,8 +36,29 @@
 		<div data-role="content" class="content">
 			<div class="ui-grid-a my-breakpoint">
 
-				<form id="loginForm" data-ajax="false">
-					<h2>Log in</h2>
+				<form id="registerForm" data-ajax="false">
+					<h2>Register new user</h2>
+					<div data-role="fieldcontain"
+						class="ui-field-contain ui-body ui-br">
+						<label for="givenName" class="ui-input-text">Given name:</label> <input
+							type="text" name="givenName" id="givenName" value=""
+							class="ui-input-text ui-body-c ui-corner-all">
+					</div>
+					
+					<div data-role="fieldcontain"
+						class="ui-field-contain ui-body ui-br">
+						<label for="familyName" class="ui-input-text">Family name:</label> <input
+							type="text" name="familyName" id="familyName" value=""
+							class="ui-input-text ui-body-c ui-corner-all">
+					</div>
+					
+					<div data-role="fieldcontain"
+						class="ui-field-contain ui-body ui-br">
+						<label for="email" class="ui-input-text">Email:</label> <input
+							type="email" name="email" id="email" value=""
+							class="ui-input-text ui-body-c ui-corner-all">
+					</div>
+					
 					<div data-role="fieldcontain"
 						class="ui-field-contain ui-body ui-br">
 						<label for="userName" class="ui-input-text">Username:</label> <input
@@ -52,19 +73,13 @@
 							class="ui-input-text ui-corner-all">
 					</div>
 
-					<input type="button" id="loginButton" name="loginButton"
-						value="Login" />
+					<input type="button" id="registerButton" name="registerButton"
+						value="Register" />
 
 					<div id="message_ajax"></div>
 				</form>
 			</div>
-			
-			<br />
-			<div class="register-link">
-				<h2>New user? Register!</h2>
-				<a data-role="button" href="register.html" rel="external">Register</a>
-			</div>
-			
+
 		</div>
 	</div>
 </body>

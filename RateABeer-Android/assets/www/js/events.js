@@ -213,7 +213,7 @@ $(document).ready(function() {
 
 		$(".eventDescription").text(eventData.description);
 		$(".eventDescription").html(eventData.description);
-		$(".eventHost").text(eventData.user.username + ' (' + eventData.user.name + ' ' + eventData.user.lastname + ')');
+		$(".eventHost").text(eventData.user.username + ' (' + eventData.user.name + ' ' + eventData.user.lastName + ')');
 		console.log("Displaying event: " + JSON.stringify(displayedEventData));
 
 //		var overallR = (parseInt(beerData.rateFlavour)
@@ -255,8 +255,17 @@ $(document).ready(function() {
 	};
 	
 	$.fn.parseEventJsonGoing = function(users, div) {
-
+		
 		var currentUser = window.sessionStorage.getItem("userId"), currentUserGoing = false;
+		
+		if (users === 'undefined' || users == null) {
+			$('.eventParticipation').html("<a href=\"\" data-role=\"button\" data-mini=\"true\" id=\"buttonParticipate\">Participate</a>");
+			$('.eventParticipation').trigger('create');
+			
+			$('#buttonParticipate').bind('click', $.fn.buttonClickParticipate);
+			return;
+		}
+		
 		
 		var data;		
 		if (users.user instanceof Array) {
@@ -275,7 +284,7 @@ $(document).ready(function() {
 					currentUserGoing = true;
 			});
 		}
-
+		
 		if (currentUserGoing === 'false') {
 			$('.eventParticipation').html("<a href=\"\" data-role=\"button\" data-mini=\"true\" id=\"buttonParticipate\">Participate</a>");
 			$('.eventParticipation').trigger('create');

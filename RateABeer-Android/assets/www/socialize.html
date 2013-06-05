@@ -29,7 +29,9 @@
 	<div data-role="page" id="page1">
 		<div data-theme="a" data-role="header">
 			<div style="text-align: center">
-				<img style="width: 320px; height: 38px" src="img/logo.png" />
+				<a href="index.html" rel="external">
+					<img style="width: 320px; height: 38px" src="img/logo.png" />
+				</a>
 			</div>
 		</div>
 		<div data-role="content" class="content">
@@ -45,16 +47,16 @@
 
 					<div data-role="fieldcontain"
 						class="ui-field-contain ui-body ui-br">
-						<label for="eventDescription" class="ui-input-text">Description:</label>
+						<label for="eventDescription">Description:</label>
 						<textarea cols="40" rows="12" name="eventDescription"
 							id="eventDescription"></textarea>
 					</div>
 
-					<div data-role="fieldcontain"
-						class="ui-field-contain ui-body ui-br">
-						<label for="location" class="ui-input-text">Location:</label> <input
-							type="text" name="location" id="location" value="" />
-					</div>
+<!-- 					<div data-role="fieldcontain" -->
+<!-- 						class="ui-field-contain ui-body ui-br"> -->
+<!-- 						<label for="location" class="ui-input-text">Location:</label> <input -->
+<!-- 							type="text" name="location" id="location" value="" /> -->
+<!-- 					</div> -->
 
 					<div data-role="fieldcontain"
 						class="ui-field-contain ui-body ui-br">
@@ -82,6 +84,7 @@
 
 					<div id="message_ajax"></div>
 					
+					<h2>Invite your friends:</h2>
 					<div id="allUsers">
 						
 						<ul data-role="listview" data-inset="true" id="usersList">

@@ -54,7 +54,7 @@ $(function() {
 			tmpLoc.lon = chosenLocationLon;
 			tmpLoc.name = chosenLocationName;
 			tmpLoc.user = new Object();
-			tmpLoc.user.id = 1;
+			tmpLoc.user.id = window.sessionStorage.getItem("userId");
 
 			var data = JSON.stringify(tmpLoc);
 			$.ajax({
@@ -153,7 +153,7 @@ $(function() {
 			rateObj = new Object();
 			rateObj.user = new Object();
 			rateObj.beer = new Object();
-			rateObj.user.id = 1;
+			rateObj.user.id = window.sessionStorage.getItem("userId");
 			rateObj.beer.id = chosenBeer;
 			rateObj.type = i;
 			rateObj.ocena = value;
@@ -488,7 +488,7 @@ $(function() {
 							+ dateObj.getSeconds();
 					comObj.author = new Object();
 					comObj.author.username = "testni";
-					comObj.author.id = "1";
+					comObj.author.id = window.sessionStorage.getItem("userId")+'';
 					comObj.comment = val;
 					comObj.date = dateStr;
 					var jsonObj = JSON.stringify(comObj);
