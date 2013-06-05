@@ -32,10 +32,11 @@ h1 {
 }
 
 .linktext {
+	font-family: Verdana;
 	color: white;
 	display: block;
 	margin-top: -5px;
-	font-size: 1.5em;
+	font-size: 1.0em;
 }
 
 .overallrating {
@@ -48,7 +49,7 @@ h1 {
 }
 
 .ui-btn-inner {
-	font-size: 1.875em;/*font-size: 14px;*/
+	font-size: 1.075em;/*font-size: 14px;*/
 	padding: 5px;
 	font-family: Helvetica, Arial, sans-serif;
 	font-style: italic;
